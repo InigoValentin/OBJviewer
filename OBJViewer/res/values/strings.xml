@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OBJ viewer</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="menu_open">Open file</string>
+    <string name="menu_draw_vertizes">Vertizes</string>
+    <string name="menu_draw_edges">Edges</string>
+    <string name="menu_draw_faces">Faces</string>
+    <string name="menu_color_verizes">Vertizes color</string>
+    <string name="menu_color_edges">Edges color</string>
+    <string name="menu_color_faces">Faces color</string>
+</resources>
