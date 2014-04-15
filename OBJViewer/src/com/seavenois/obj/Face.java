@@ -1,8 +1,10 @@
 package com.seavenois.obj;
 
+import java.util.Comparator;
+
 import android.util.Log;
 
-public class Face {
+public class Face implements Comparable<Face>{
 	
 	static final int MAX_VERTIZES = 64;
 	
@@ -41,5 +43,29 @@ public class Face {
 	
 	public void setMaterial(Material mat){
 		this.mat = mat;
+	}
+
+	@Override
+	public int compareTo(Face another) {
+		float lZ, rZ;
+		int i = 0;
+		float sum = .0f;
+		
+		while (i <  this.getVertexCount()){
+			sum = sum + this.getVertex(i).getZ();//lhparseFloat(vert[a[i]][2]);
+			i = i + 1;
+		}
+		lZ = sum / i;
+		i = 0;
+		sum = 0;
+		while (i <  another.getVertexCount()){
+			sum = sum + another.getVertex(i).getZ();//lhparseFloat(vert[a[i]][2]);
+			i = i + 1;
+		}
+		rZ = sum / i;
+		i = 0;
+		if (lZ < rZ) return -1;
+		if (lZ > rZ) return 1;
+		return 0;
 	}
 }

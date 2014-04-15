@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -12,20 +14,14 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
@@ -96,9 +92,8 @@ public class MainActivity extends Activity {
 	//TODO: if in the 10% of the left of the screen, return false
 
 	public void draw(){
+		Arrays.sort(face, 0, totalFaces);
 		Bitmap bmp = createBitMap();
-		for (int i = 0; i < totalVerts; i ++)
-			Log.d("vert[" + Integer.toString(i) + "]", vert[i].getX() + ", " + vert[i].getY() + ", " + vert[i].getZ());
 		//Draw the image
 		ivCanvas.setImageBitmap(bmp);
 	}
@@ -137,6 +132,11 @@ public class MainActivity extends Activity {
 		Paint paintFace = new Paint();
         paintVert.setStyle(Paint.Style.FILL);
         paintVert.setColor(android.graphics.Color.RED);
+        paintEdge.setStyle(Paint.Style.STROKE);
+        paintEdge.setStrokeWidth(2);
+        paintEdge.setColor(android.graphics.Color.GREEN);
+        paintFace.setStyle(Paint.Style.FILL);
+        paintFace.setColor(android.graphics.Color.YELLOW);
         //canvas.drawCircle(w/2, h/2 , w/2, paint);
 		//ivCanvas.setImageBitmap(bmp);
 		for (int f = 0; f < totalFaces; f ++){
@@ -153,6 +153,7 @@ public class MainActivity extends Activity {
 				canvas.drawCircle(x, y, 2, paintVert);
 			}
 			paintEdge.setColor(android.graphics.Color.BLUE);
+			canvas.drawPath(path, paintFace);
 			canvas.drawPath(path, paintEdge);
 		}
 		return bmp;
