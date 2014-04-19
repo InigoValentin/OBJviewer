@@ -1,5 +1,4 @@
-<com.seavenois.obj.MainLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.seavenois.obj.MainLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,36 +16,115 @@
             android:background="@color/background_menu"
             android:divider="@drawable/divider"
             android:dividerPadding="25dp"
-            android:orientation="vertical"
-            android:showDividers="middle" >
+            android:orientation="vertical" >
             
             <Button
-            android:id="@+id/btLoadModel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/menu_open" />
+                android:id="@+id/btLoadModel"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/menu_open" />
+
+            <CheckBox
+                android:id="@+id/cbDrawVertizes"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:checked="true"
+                android:text="@string/menu_draw_vertizes" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:id="@+id/llVertexPreferences"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:orientation="vertical" >
 
-                <ToggleButton
-                    android:id="@+id/tgDrawVertizes"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_draw_vertizes" />
-                
-                <ToggleButton
-                    android:id="@+id/tgDrawEdges"
+                    android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:text="@string/menu_size_vertizes"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <SeekBar
+                    android:id="@+id/sbVertexSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_gravity="top"
+                    android:max="10" />
+
+                <TextView
+                    android:id="@+id/tvVertexColor"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_draw_edges" />
-                
-                <ToggleButton
-                    android:id="@+id/tgDrawFaces"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/menu_color_verizes" />
+
+            </LinearLayout>
+            
+            <CheckBox
+                android:id="@+id/cbDrawEdges"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:checked="true"
+                android:text="@string/menu_draw_edges" />
+
+            <LinearLayout
+                android:id="@+id/llEdgePreferences"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:orientation="vertical" >
+
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_draw_faces" />
+                    android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:text="@string/menu_size_edges"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <SeekBar
+                    android:id="@+id/sbEdgeSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_gravity="top"
+                    android:max="10" />
+
+                <TextView
+                    android:id="@+id/tvEdgeColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/menu_color_edges" />
+
+            </LinearLayout>
+            
+            <CheckBox
+                android:id="@+id/cbDrawFaces"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:checked="true"
+                android:text="@string/menu_draw_faces" />
+
+            <LinearLayout
+                android:id="@+id/llFacePreferences"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tvFaceColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/menu_color_faces" />
 
             </LinearLayout>
             

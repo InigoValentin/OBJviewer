@@ -1,7 +1,5 @@
 package com.seavenois.obj;
 
-import java.util.Comparator;
-
 import android.util.Log;
 
 public class Face implements Comparable<Face>{

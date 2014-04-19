@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -14,22 +13,36 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
 	static final int MAX_VERTIZES = 100000;
 	static final int MAX_FACES = 100000;
 	
+	//UI elements
 	ImageView ivCanvas;
+	Button btLoadModel;
+	LinearLayout llVertexPreferences, llEdgePreferences, llFacePreferences;
+	CheckBox cbDrawVertizes, cbDrawEdges, cbDrawFaces;
+	TextView tvVertexColor, tvEdgeColor, tvFaceColor;
+	SeekBar sbEdgeSize, sbVertexSize;
 	
 	MainLayout mLayout;
 	Vertex[] vert = new Vertex[MAX_VERTIZES];
@@ -40,6 +53,11 @@ public class MainActivity extends Activity {
 	boolean touching = false;
 	float prevX, prevY;
 	
+	//Booleans to determine wich elements to draw
+	boolean drawVertizes = true;
+	boolean drawEdges = true;
+	boolean drawFaces = true;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//Remove title bar
@@ -49,10 +67,105 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		//Useful variables
+		Drawable daux;
+		
 		//Assign elements
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
+		btLoadModel = (Button) findViewById(R.id.btLoadModel);
+		cbDrawVertizes = (CheckBox) findViewById(R.id.cbDrawVertizes);
+		cbDrawEdges = (CheckBox) findViewById(R.id.cbDrawEdges);
+		cbDrawFaces = (CheckBox) findViewById(R.id.cbDrawFaces);
+		llVertexPreferences = (LinearLayout) findViewById(R.id.llVertexPreferences);
+		llEdgePreferences = (LinearLayout) findViewById(R.id.llEdgePreferences);
+		llFacePreferences = (LinearLayout) findViewById(R.id.llFacePreferences);
+		tvVertexColor = (TextView) findViewById(R.id.tvVertexColor);
+		tvEdgeColor = (TextView) findViewById(R.id.tvEdgeColor);
+		tvFaceColor = (TextView) findViewById(R.id.tvFaceColor);
+		sbVertexSize = (SeekBar) findViewById(R.id.sbVertexSize);
+		sbEdgeSize = (SeekBar) findViewById(R.id.sbEdgeSize);
+		
+		//Assign listeners for ui elements
+		btLoadModel.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				//TODO
+			}
+		});
+		
+		cbDrawVertizes.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				if (isChecked == true){
+					llVertexPreferences.setVisibility(View.VISIBLE);
+					drawVertizes = true;
+				}
+				else{
+					llVertexPreferences.setVisibility(View.GONE);
+					drawVertizes = false;
+				}
+				draw();
+			}
+		});
+		cbDrawEdges.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				if (isChecked == true){
+					llEdgePreferences.setVisibility(View.VISIBLE);
+					drawEdges = true;
+				}
+				else{
+					llEdgePreferences.setVisibility(View.GONE);
+					drawEdges = false;
+				}
+				draw();		
+			}
+		});
+		cbDrawFaces.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				if (isChecked == true){
+					llFacePreferences.setVisibility(View.VISIBLE);
+					drawFaces = true;
+				}
+				else{
+					llFacePreferences.setVisibility(View.GONE);
+					drawFaces = false;
+				}
+				draw();			
+			}
+		});
+		
+		daux = getResources().getDrawable(R.drawable.square); //TODO: Create drawable with the color
+		daux.setBounds(0, 0, 50, 50);
+		tvVertexColor.setCompoundDrawables(daux ,null, null, null);
+		daux = getResources().getDrawable(R.drawable.square); //TODO: Create drawable with the color
+		daux.setBounds(0, 0, 50, 50);
+		tvEdgeColor.setCompoundDrawables(daux ,null, null, null);
+		daux = getResources().getDrawable(R.drawable.square); //TODO: Create drawable with the color
+		daux.setBounds(0, 0, 50, 50);
+		tvFaceColor.setCompoundDrawables(daux ,null, null, null);
+		tvVertexColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				//TODO
+			}
+		});
+		tvEdgeColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				//TODO
+			}
+		});
+		tvFaceColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				//TODO
+			}
+		});
+		
+		//Assign touch listener for the main canvas
 		ivCanvas.setOnTouchListener(new OnTouchListener() {
-
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				DisplayMetrics metrics = new DisplayMetrics();
@@ -72,15 +185,14 @@ public class MainActivity extends Activity {
 						break;
 					case MotionEvent.ACTION_MOVE:
 						if (touching){
-							rotateX(event.getX() - prevX);
-							rotateY(event.getY() - prevY);
+							rotateX(prevX - event.getX());
+							rotateY(prevY - event.getY());
 							draw();
 							prevX = event.getX();
 							prevY = event.getY();
 						}
 						break;
 				}
-				
 				return true;
 			}
 		});
@@ -89,7 +201,6 @@ public class MainActivity extends Activity {
 		readFile("raw/cubeobj");
 		draw();
 	}
-	//TODO: if in the 10% of the left of the screen, return false
 
 	public void draw(){
 		Arrays.sort(face, 0, totalFaces);
@@ -145,16 +256,20 @@ public class MainActivity extends Activity {
 			x = (int) (w / 2 + face[f].getVertex(0).getX() * scale);
 			y = (int) (h / 2 + face[f].getVertex(0).getY() * scale);
 			path.moveTo(x, y);
-			canvas.drawCircle(x, y, 2, paintVert);
+			if (drawVertizes)
+				canvas.drawCircle(x, y, 2, paintVert);
 			for (int v = 1; v < face[f].getVertexCount(); v ++){
 				x = (int) (w / 2 + face[f].getVertex(v).getX() * scale);
 				y = (int) (h / 2 + face[f].getVertex(v).getY() * scale);
 				path.lineTo(x, y);
-				canvas.drawCircle(x, y, 2, paintVert);
+				if (drawVertizes)
+					canvas.drawCircle(x, y, 2, paintVert);
 			}
 			paintEdge.setColor(android.graphics.Color.BLUE);
-			canvas.drawPath(path, paintFace);
-			canvas.drawPath(path, paintEdge);
+			if (drawFaces)
+				canvas.drawPath(path, paintFace);
+			if(drawEdges)
+				canvas.drawPath(path, paintEdge);
 		}
 		return bmp;
 	}
@@ -208,7 +323,7 @@ public class MainActivity extends Activity {
 					f = f + 1;
 				}
 				//else if (line.substring(0, 6) == "usemtl"){ TODO
-				//	mat = line.substring(7);
+				//	mat = line.substring(7);Edge
 				//}
 	        }
 	        totalVerts = v;
@@ -245,13 +360,6 @@ public class MainActivity extends Activity {
 	
 	public void toggleMenu(View v) {
 		mLayout.toggleMenu();
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
 	}
 
 }

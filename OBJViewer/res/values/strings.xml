@@ -9,7 +9,9 @@
     <string name="menu_draw_vertizes">Vertizes</string>
     <string name="menu_draw_edges">Edges</string>
     <string name="menu_draw_faces">Faces</string>
-    <string name="menu_color_verizes">Vertizes color</string>
-    <string name="menu_color_edges">Edges color</string>
-    <string name="menu_color_faces">Faces color</string>
+    <string name="menu_color_verizes">Vertex color</string>
+    <string name="menu_color_edges">Edge color</string>
+    <string name="menu_color_faces">Face color</string>
+    <string name="menu_size_vertizes">Vertex size</string>
+    <string name="menu_size_edges">Edges size</string>
 </resources>
