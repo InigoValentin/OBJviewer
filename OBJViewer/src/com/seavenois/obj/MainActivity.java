@@ -36,10 +36,13 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-	static final int MAX_VERTIZES = 100000;
-	static final int MAX_FACES = 100000;
+	//Static variables
+	static final int MAX_VERTIZES = 100000;		//Max number of vertices in file
+	static final int MAX_FACES = 100000;		//Max number of faces in file
+	static final int MAX_MATERIALS = 100;		//Max number of materials in file
 	
-	static final int CODE_COLOR_VERTEX = 1803;
+	//Codes passed to ColorActivity activity. Can be anything.
+	static final int CODE_COLOR_VERTEX = 1803;	
 	static final int CODE_COLOR_EDGE = 1804;
 	static final int CODE_COLOR_FACE = 1805;
 	
@@ -54,7 +57,8 @@ public class MainActivity extends Activity {
 	MainLayout mLayout;
 	Vertex[] vert = new Vertex[MAX_VERTIZES];
 	Face[] face = new Face[MAX_FACES];
-	int totalVerts, totalFaces;
+	Material[] material = new Material[MAX_MATERIALS];
+	int totalVerts, totalFaces, totalMaterials;
 	boolean touching = false;
 	float prevX, prevY;
 	
@@ -95,6 +99,7 @@ public class MainActivity extends Activity {
 		
 		//Assign elements
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
+		mLayout = (MainLayout) findViewById(R.id.main_layout);
 		btLoadModel = (Button) findViewById(R.id.btLoadModel);
 		cbDrawVertizes = (CheckBox) findViewById(R.id.cbDrawVertizes);
 		cbDrawEdges = (CheckBox) findViewById(R.id.cbDrawEdges);
@@ -271,8 +276,10 @@ public class MainActivity extends Activity {
 				return true;
 			}
 		});
-		
-		//Load file
+		//REad mtl file
+		//TODO: Check if exists
+		readMtl("raw/cubemtl");
+		//Read obj file file
 		readFile("raw/cubeobj");
 		draw();
 	}
@@ -346,80 +353,131 @@ public class MainActivity extends Activity {
 		return bmp;
 	}
 	
-	private void readFile(String filename){
-	    String str;
-	    float x, y, z, dist;
-	    float max = 0;
-	    int v = 0;
-	    int f = 0;
-	    int j;
-	    Material mat;
-	    try {			
-	      InputStream is = getBaseContext().getResources().openRawResource(R.raw.cubeobj);
- 
-	      BufferedReader input =  new BufferedReader(new InputStreamReader(is), 1024*8);
-	      try {
-	        String line = null; 
-	        while (( line = input.readLine()) != null){
-	        	if (line.substring(0, 2).equals("v ")){
-					line = line.substring(2);
-					x = Float.valueOf(line.substring(0, line.indexOf(" ")));
-					line = line.substring(line.indexOf(" ") + 1);
-					y = Float.valueOf(line.substring(0, line.indexOf(" ")));
-					line = line.substring(line.indexOf(" ") + 1);
-					z = Float.valueOf(line);
-					
-					dist = (float) Math.sqrt(x * x + y * y + z * z);
-					if (dist > max)
-						max = dist;
-					vert[v] = new Vertex(x, y, z);
-					v = v + 1;
-				}
-				else if (line.substring(0,2).equals("f ")){
-					line = line.substring(2);
-					face[f] = new Face();
-					j = 0;
-					while(line.indexOf(" ") != -1){
-						str = line.substring(0, line.indexOf(" "));
-						if (str.indexOf('/') != -1)
-							str = str.substring(0, str.indexOf('/'));
-						face[f].addVertex(vert[Integer.valueOf(str) - 1]);
-						line = line.substring(line.indexOf(" ") + 1);
-						j = j + 1;
+	private void readMtl(String filename){
+		String str;
+		Color c;
+		float r, g, b;
+		int ri, gi, bi;
+		int m = -1;
+		try{
+			InputStream is = getBaseContext().getResources().openRawResource(R.raw.cubemtl); //TODO: Open file, not raw
+			BufferedReader input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+			try{
+				String line = null;
+				while ((line = input.readLine()) != null){
+					if (line.length() > 6){
+						if (line.substring(0, 6).equals("newmtl")){
+							m = m + 1;
+							material[m] = new Material();
+							str = line.substring(7);
+							material[m].setName(str);
+						}
+						else if (line.substring(0, 3).equals("Kd ")){
+							line = line.substring(3);
+							r = Float.valueOf(line.substring(0, line.indexOf(" ")));
+							line = line.substring(line.indexOf(" ") + 1);
+							g = Float.valueOf(line.substring(0, line.indexOf(" ")));
+							line = line.substring(line.indexOf(" ") + 1);
+							b = Float.valueOf(line);
+							ri = (int) (r * 255);
+							gi = (int) (g * 255);
+							bi = (int) (b * 255);
+							c = new Color(ri, gi, bi, 255);
+							material[m].setColor(c);
+						}
 					}
-					str = line;
-					if (str.indexOf('/') != -1)
-						str = str.substring(0, str.indexOf('/'));
-					face[f].addVertex(vert[Integer.valueOf(str) - 1]);
-					//face[f].setMaterial(mat); TODO
-					f = f + 1;
 				}
-				//else if (line.substring(0, 6) == "usemtl"){ TODO
-				//	mat = line.substring(7);Edge
-				//}
-	        }
-	        totalVerts = v;
-	        totalFaces = f;
-	      }
-	      finally {
-	        input.close();
-	      }
-	    }
-	    catch (FileNotFoundException ex) {
-	    	Log.e("ERROR", "Couldn't find the file " + filename  + " " + ex);
-	    }
-	    catch (IOException ex){
-	    	Log.e("ERROR", "Error reading file " + filename + " " + ex);
-	    }
+				totalMaterials = m;
+			}
+			finally {
+				input.close();
+			}
+		}
+		catch (FileNotFoundException ex) {
+			Log.e("ERROR", "Couldn't find the file " + filename  + " " + ex);
+		}
+		catch (IOException ex){
+			Log.e("ERROR", "Error reading file " + filename + " " + ex);
+		}
 	}
+	
+	private void readFile(String filename){
+		String str;
+		float x, y, z, dist;
+		float max = 0;
+		int v = 0;
+		int f = 0;
+		int j;
+		Material mat = null;
+		try {			
+			InputStream is = getBaseContext().getResources().openRawResource(R.raw.cubeobj); //TODO: Open file, not raw
+			BufferedReader input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+			try {
+				String line = null; 
+				while ((line = input.readLine()) != null){
+					if (line.length() > 6){
+						if (line.substring(0, 2).equals("v ")){
+							line = line.substring(2);
+							x = Float.valueOf(line.substring(0, line.indexOf(" ")));
+							line = line.substring(line.indexOf(" ") + 1);
+							y = Float.valueOf(line.substring(0, line.indexOf(" ")));
+							line = line.substring(line.indexOf(" ") + 1);
+							z = Float.valueOf(line);
+							dist = (float) Math.sqrt(x * x + y * y + z * z);
+							if (dist > max)
+								max = dist;
+							vert[v] = new Vertex(x, y, z);
+							v = v + 1;
+						}
+						else if (line.substring(0,2).equals("f ")){
+							line = line.substring(2);
+							face[f] = new Face();
+							j = 0;
+							while(line.indexOf(" ") != -1){
+								str = line.substring(0, line.indexOf(" "));
+								if (str.indexOf('/') != -1)
+									str = str.substring(0, str.indexOf('/'));
+								face[f].addVertex(vert[Integer.valueOf(str) - 1]);
+								line = line.substring(line.indexOf(" ") + 1);
+								j = j + 1;
+							}
+							str = line;
+							if (str.indexOf('/') != -1)
+								str = str.substring(0, str.indexOf('/'));
+							face[f].addVertex(vert[Integer.valueOf(str) - 1]);
+							face[f].setMaterial(mat);
+							f = f + 1;
+						}
+						else if (line.substring(0, 6) == "usemtl"){
+							String name = line.substring(7);
+							int i = 0;
+							while (i < totalMaterials && material[i].getName().equals(name) == false)
+								i ++;
+							mat = material[i];
+						}
+					}
+				}
+		        totalVerts = v;
+		        totalFaces = f;
+			}
+			finally {
+				input.close();
+			}
+		}
+		catch (FileNotFoundException ex) {
+			Log.e("ERROR", "Couldn't find the file " + filename  + " " + ex);
+		}
+		catch (IOException ex){
+			Log.e("ERROR", "Error reading file " + filename + " " + ex);
+		}
+	}
+	
 	@Override
 	public void onBackPressed() {
-		if (mLayout.isMenuShown()) {
+		if (mLayout.isMenuShown())
 			mLayout.toggleMenu();
-		}
-		else {
+		else
 			super.onBackPressed();
-		}
 	}
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) { 
@@ -429,10 +487,6 @@ public class MainActivity extends Activity {
         }
         return super.onKeyDown(keyCode, event); 
     }
-	
-	public void toggleMenu(View v) {
-		mLayout.toggleMenu();
-	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
