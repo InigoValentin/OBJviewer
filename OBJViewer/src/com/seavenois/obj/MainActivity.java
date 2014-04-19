@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,6 +39,10 @@ public class MainActivity extends Activity {
 	static final int MAX_VERTIZES = 100000;
 	static final int MAX_FACES = 100000;
 	
+	static final int CODE_COLOR_VERTEX = 1803;
+	static final int CODE_COLOR_EDGE = 1804;
+	static final int CODE_COLOR_FACE = 1805;
+	
 	//UI elements
 	ImageView ivCanvas;
 	Button btLoadModel;
@@ -59,6 +64,9 @@ public class MainActivity extends Activity {
 	int vertexWidth = 3;
 	int edgeWidth = 2;
 	
+	//Colors
+	Color colorVertex, colorEdge, colorFace;
+	
 	//Booleans to determine wich elements to draw
 	boolean drawVertizes = true;
 	boolean drawEdges = true;
@@ -75,6 +83,15 @@ public class MainActivity extends Activity {
 		
 		//Useful variables
 		Drawable daux;
+		Bitmap.Config conf;
+		Bitmap bmp;
+		Canvas canvas;
+		Paint paint;
+		
+		//Init colors
+		colorVertex = new Color(255, 0, 0, 255);
+		colorEdge = new Color(0, 255, 0, 255);
+		colorFace = new Color(0, 0, 255, 255);
 		
 		//Assign elements
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
@@ -142,32 +159,55 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		daux = getResources().getDrawable(R.drawable.square); //TODO: Create drawable with the color
+		conf = Bitmap.Config.ARGB_8888;
+		bmp = Bitmap.createBitmap(50, 50, conf);
+		canvas = new Canvas(bmp);
+		paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setARGB(colorVertex.getA(), colorVertex.getR(), colorVertex.getG(), colorVertex.getB());
+        canvas.drawRect(0, 0, 50, 50, paint);
+		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvVertexColor.setCompoundDrawables(daux ,null, null, null);
-		daux = getResources().getDrawable(R.drawable.square); //TODO: Create drawable with the color
+		conf = Bitmap.Config.ARGB_8888;
+		bmp = Bitmap.createBitmap(50, 50, conf);
+		canvas = new Canvas(bmp);
+		paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setARGB(colorEdge.getA(), colorEdge.getR(), colorEdge.getG(), colorEdge.getB());
+        canvas.drawRect(0, 0, 50, 50, paint);
+		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvEdgeColor.setCompoundDrawables(daux ,null, null, null);
-		daux = getResources().getDrawable(R.drawable.square); //TODO: Create drawable with the color
+		conf = Bitmap.Config.ARGB_8888;
+		bmp = Bitmap.createBitmap(50, 50, conf);
+		canvas = new Canvas(bmp);
+		paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setARGB(colorFace.getA(), colorFace.getR(), colorFace.getG(), colorFace.getB());
+        canvas.drawRect(0, 0, 50, 50, paint);
+		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvFaceColor.setCompoundDrawables(daux ,null, null, null);
 		tvVertexColor.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
 				Intent i = new Intent(getBaseContext(), ColorActivity.class);
-				startActivityForResult(i, 1);
+				startActivityForResult(i, CODE_COLOR_VERTEX);
 			}
 		});
 		tvEdgeColor.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				//TODO
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				startActivityForResult(i, CODE_COLOR_EDGE);
 			}
 		});
 		tvFaceColor.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				//TODO
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				startActivityForResult(i, CODE_COLOR_FACE);
 			}
 		});
 		
@@ -216,7 +256,6 @@ public class MainActivity extends Activity {
 						prevY = event.getY();
 						break;
 					case MotionEvent.ACTION_UP:
-						Log.d("Touching", "move");
 						touching = false;
 						break;
 					case MotionEvent.ACTION_MOVE:
@@ -271,21 +310,19 @@ public class MainActivity extends Activity {
 		int w = metrics.widthPixels;
 		int x, y;
 		Path path;
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-		Bitmap bmp = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+		Bitmap bmp = Bitmap.createBitmap(w, h, conf);
 		Canvas canvas = new Canvas(bmp);
 		Paint paintVert = new Paint();
 		Paint paintEdge = new Paint();
 		Paint paintFace = new Paint();
         paintVert.setStyle(Paint.Style.FILL);
-        paintVert.setColor(android.graphics.Color.RED);
+        paintVert.setARGB(colorVertex.getA(), colorVertex.getR(), colorVertex.getG(), colorVertex.getB());
+        paintEdge.setARGB(255, colorEdge.getR(), colorEdge.getG(), colorEdge.getB());
         paintEdge.setStyle(Paint.Style.STROKE);
         paintEdge.setStrokeWidth(edgeWidth);
-        paintEdge.setColor(android.graphics.Color.GREEN);
         paintFace.setStyle(Paint.Style.FILL);
-        paintFace.setColor(android.graphics.Color.YELLOW);
-        //canvas.drawCircle(w/2, h/2 , w/2, paint);
-		//ivCanvas.setImageBitmap(bmp);
+        paintFace.setARGB(colorFace.getA(), colorFace.getR(), colorFace.getG(), colorFace.getB());
 		for (int f = 0; f < totalFaces; f ++){
 			path = new Path();
 			path.setFillType(Path.FillType.EVEN_ODD);
@@ -301,7 +338,6 @@ public class MainActivity extends Activity {
 				if (drawVertizes)
 					canvas.drawCircle(x, y, vertexWidth, paintVert);
 			}
-			paintEdge.setColor(android.graphics.Color.BLUE);
 			if (drawFaces)
 				canvas.drawPath(path, paintFace);
 			if(drawEdges)
@@ -398,4 +434,84 @@ public class MainActivity extends Activity {
 		mLayout.toggleMenu();
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		int r, g, b;
+		Bitmap.Config conf;
+		Bitmap bmp;
+		Canvas canvas;
+		Paint paint;
+		switch(requestCode) {
+		case (CODE_COLOR_VERTEX):
+			if (resultCode == Activity.RESULT_OK) {
+				r = data.getIntExtra("r", -1);
+				g = data.getIntExtra("g", -1);
+				b = data.getIntExtra("b", -1);
+				if(r != -1 && g != -1 && b != -1){
+					colorVertex.setR(r);
+					colorVertex.setG(g);
+					colorVertex.setB(b);
+					conf = Bitmap.Config.ARGB_8888;
+					bmp = Bitmap.createBitmap(50, 50, conf);
+					canvas = new Canvas(bmp);
+					paint = new Paint();
+			        paint.setStyle(Paint.Style.FILL);
+			        paint.setARGB(255, r, g, b);
+			        canvas.drawRect(0, 0, 50, 50, paint);
+					Drawable daux = new BitmapDrawable(getResources(), bmp);
+					daux.setBounds(0, 0, 50, 50);
+					tvVertexColor.setCompoundDrawables(daux ,null, null, null);
+					draw();
+				}
+			}
+			break;
+		case (CODE_COLOR_EDGE):
+			if (resultCode == Activity.RESULT_OK) {
+				r = data.getIntExtra("r", -1);
+				g = data.getIntExtra("g", -1);
+				b = data.getIntExtra("b", -1);
+				if(r != -1 && g != -1 && b != -1){
+					colorEdge.setR(r);
+					colorEdge.setG(g);
+					colorEdge.setB(b);
+					conf = Bitmap.Config.ARGB_8888;
+					bmp = Bitmap.createBitmap(50, 50, conf);
+					canvas = new Canvas(bmp);
+					paint = new Paint();
+			        paint.setStyle(Paint.Style.FILL);
+			        paint.setARGB(255, r, g, b);
+			        canvas.drawRect(0, 0, 50, 50, paint);
+					Drawable daux = new BitmapDrawable(getResources(), bmp);
+					daux.setBounds(0, 0, 50, 50);
+					tvEdgeColor.setCompoundDrawables(daux ,null, null, null);
+					draw();
+				}
+			}
+			break;
+		case (CODE_COLOR_FACE):
+			if (resultCode == Activity.RESULT_OK) {
+				r = data.getIntExtra("r", -1);
+				g = data.getIntExtra("g", -1);
+				b = data.getIntExtra("b", -1);
+				if(r != -1 && g != -1 && b != -1){
+					colorFace.setR(r);
+					colorFace.setG(g);
+					colorFace.setB(b);
+					conf = Bitmap.Config.ARGB_8888;
+					bmp = Bitmap.createBitmap(50, 50, conf);
+					canvas = new Canvas(bmp);
+					paint = new Paint();
+			        paint.setStyle(Paint.Style.FILL);
+			        paint.setARGB(255, r, g, b);
+			        canvas.drawRect(0, 0, 50, 50, paint);
+					Drawable daux = new BitmapDrawable(getResources(), bmp);
+					daux.setBounds(0, 0, 50, 50);
+					tvFaceColor.setCompoundDrawables(daux ,null, null, null);
+					draw();
+				}
+			}
+			break;
+		}
+	}
 }
