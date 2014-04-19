@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -29,6 +30,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -48,10 +50,14 @@ public class MainActivity extends Activity {
 	Vertex[] vert = new Vertex[MAX_VERTIZES];
 	Face[] face = new Face[MAX_FACES];
 	int totalVerts, totalFaces;
-	float scale = 40;
-	float rotationSpeed = 90;
 	boolean touching = false;
 	float prevX, prevY;
+	
+	//Useful measures
+	float scale = 40;
+	float rotationSpeed = 90;
+	int vertexWidth = 3;
+	int edgeWidth = 2;
 	
 	//Booleans to determine wich elements to draw
 	boolean drawVertizes = true;
@@ -148,7 +154,8 @@ public class MainActivity extends Activity {
 		tvVertexColor.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				//TODO
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				startActivityForResult(i, 1);
 			}
 		});
 		tvEdgeColor.setOnClickListener(new OnClickListener(){
@@ -162,6 +169,35 @@ public class MainActivity extends Activity {
 			public void onClick(View v){
 				//TODO
 			}
+		});
+		
+		sbVertexSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				vertexWidth = progress + 1;
+				draw();
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+			
+		});
+		sbEdgeSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				edgeWidth = progress + 1;
+				draw();
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+			
 		});
 		
 		//Assign touch listener for the main canvas
@@ -244,7 +280,7 @@ public class MainActivity extends Activity {
         paintVert.setStyle(Paint.Style.FILL);
         paintVert.setColor(android.graphics.Color.RED);
         paintEdge.setStyle(Paint.Style.STROKE);
-        paintEdge.setStrokeWidth(2);
+        paintEdge.setStrokeWidth(edgeWidth);
         paintEdge.setColor(android.graphics.Color.GREEN);
         paintFace.setStyle(Paint.Style.FILL);
         paintFace.setColor(android.graphics.Color.YELLOW);
@@ -257,13 +293,13 @@ public class MainActivity extends Activity {
 			y = (int) (h / 2 + face[f].getVertex(0).getY() * scale);
 			path.moveTo(x, y);
 			if (drawVertizes)
-				canvas.drawCircle(x, y, 2, paintVert);
+				canvas.drawCircle(x, y, vertexWidth, paintVert);
 			for (int v = 1; v < face[f].getVertexCount(); v ++){
 				x = (int) (w / 2 + face[f].getVertex(v).getX() * scale);
 				y = (int) (h / 2 + face[f].getVertex(v).getY() * scale);
 				path.lineTo(x, y);
 				if (drawVertizes)
-					canvas.drawCircle(x, y, 2, paintVert);
+					canvas.drawCircle(x, y, vertexWidth, paintVert);
 			}
 			paintEdge.setColor(android.graphics.Color.BLUE);
 			if (drawFaces)

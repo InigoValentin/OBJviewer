@@ -52,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
                     android:layout_gravity="top"
-                    android:max="10" />
+                    android:max="15" />
 
                 <TextView
                     android:id="@+id/tvVertexColor"
@@ -91,7 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
                     android:layout_gravity="top"
-                    android:max="10" />
+                    android:max="8" />
 
                 <TextView
                     android:id="@+id/tvEdgeColor"

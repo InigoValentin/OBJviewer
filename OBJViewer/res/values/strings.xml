@@ -14,4 +14,8 @@
     <string name="menu_color_faces">Face color</string>
     <string name="menu_size_vertizes">Vertex size</string>
     <string name="menu_size_edges">Edges size</string>
+    
+    <string name="color_red">Red</string>
+    <string name="color_green">Green</string>
+    <string name="color_blue">Blue</string>
 </resources>
