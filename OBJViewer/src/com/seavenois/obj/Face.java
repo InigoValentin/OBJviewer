@@ -23,6 +23,12 @@ public class Face implements Comparable<Face>{
 		return mat;
 	}
 	
+	public boolean hasMaterial(){
+		if (mat == null)
+			return false;
+		else
+			return true;
+	}
 	public void addVertex(Vertex v){
 		if (vertexCount < MAX_VERTIZES){
 			vert[vertexCount] = v;

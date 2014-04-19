@@ -76,6 +76,10 @@ public class MainActivity extends Activity {
 	boolean drawEdges = true;
 	boolean drawFaces = true;
 	
+	//Booleans to determine if material file is present, and if it is to be used
+	boolean mtlFilePresent;
+	boolean useMaterial = true;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//Remove title bar
@@ -93,8 +97,8 @@ public class MainActivity extends Activity {
 		Paint paint;
 		
 		//Init colors
-		colorVertex = new Color(255, 0, 0, 255);
-		colorEdge = new Color(0, 255, 0, 255);
+		colorVertex = new Color(100, 0, 0, 255);
+		colorEdge = new Color(0, 0, 0, 255);
 		colorFace = new Color(0, 0, 255, 255);
 		
 		//Assign elements
@@ -277,8 +281,9 @@ public class MainActivity extends Activity {
 			}
 		});
 		//REad mtl file
-		//TODO: Check if exists
-		readMtl("raw/cubemtl");
+		mtlFilePresent = true; //TODO: Check if exists
+		if (mtlFilePresent == true)
+			readMtl("raw/cubemtl");
 		//Read obj file file
 		readFile("raw/cubeobj");
 		draw();
@@ -345,8 +350,13 @@ public class MainActivity extends Activity {
 				if (drawVertizes)
 					canvas.drawCircle(x, y, vertexWidth, paintVert);
 			}
-			if (drawFaces)
+			if (drawFaces){
+				if (useMaterial)
+					paintFace.setARGB(255, face[f].getMaterial().getColor().getR(), face[f].getMaterial().getColor().getG(), face[f].getMaterial().getColor().getB());
+				else
+					paintFace.setARGB(colorFace.getA(), colorFace.getR(), colorFace.getG(), colorFace.getB());
 				canvas.drawPath(path, paintFace);
+			}
 			if(drawEdges)
 				canvas.drawPath(path, paintEdge);
 		}
@@ -448,7 +458,7 @@ public class MainActivity extends Activity {
 							face[f].setMaterial(mat);
 							f = f + 1;
 						}
-						else if (line.substring(0, 6) == "usemtl"){
+						else if (line.substring(0, 6).equals("usemtl")){
 							String name = line.substring(7);
 							int i = 0;
 							while (i < totalMaterials && material[i].getName().equals(name) == false)
