@@ -1,6 +1,8 @@
 package com.seavenois.obj;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,6 +90,11 @@ public class MainActivity extends Activity {
 	    //Set layout
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		final Intent intent = getIntent();
+
+		final String action = intent.getAction();
+		Log.d("ACTION", action);
 		
 		//Useful variables
 		Drawable daux;
@@ -288,15 +295,43 @@ public class MainActivity extends Activity {
 				return true;
 			}
 		});
-		//REad mtl file
-		mtlFilePresent = true; //TODO: Check if exists
-		if (mtlFilePresent == true)
-			readMtl("raw/cubemtl");
-		//Read obj file file
-		readFile("raw/cubeobj");
+		
+		
+		if (getIntent().getAction().equals(Intent.ACTION_VIEW)){
+			//Load selected file
+			String obj, mtl;
+			Log.d("Opening model", getIntent().getData().getEncodedPath());
+			obj = getIntent().getData().getEncodedPath();
+			mtl = obj.substring(0, obj.length() - 3) + "mtl";
+			mtlFilePresent = fileExists(mtl);
+			if (mtlFilePresent == true){
+				readMtl(mtl, false);
+				useMaterial = true;
+			}
+			else
+				useMaterial = false;
+			readFile(obj, false);
+		}
+		else{
+			//Load default file
+			Log.d("Opening model", "DEFAULT");
+			mtlFilePresent = true;
+			useMaterial = true;
+			readMtl(null, true);
+			readFile(null, true);
+		}
 		draw();
 	}
 
+	public boolean fileExists(String filename){
+		File file = new File(filename);
+		Log.d(filename, Boolean.toString(file.exists()));
+		if(file.exists())      
+			return true;
+		else
+			return false;
+	}
+	
 	public void draw(){
 		Arrays.sort(face, 0, totalFaces);
 		Bitmap bmp = createBitMap();
@@ -380,15 +415,27 @@ public class MainActivity extends Activity {
 		return bmp;
 	}
 	
-	private void readMtl(String filename){
+	private void readMtl(String filename, boolean resource){
 		String str;
 		Color c;
 		float r, g, b;
 		int ri, gi, bi;
 		int m = -1;
-		try{
-			InputStream is = getBaseContext().getResources().openRawResource(R.raw.cubemtl); //TODO: Open file, not raw
-			BufferedReader input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+		InputStream is;
+		FileInputStream fis;
+		BufferedReader input;
+		File f;
+		try{ 
+			if (resource){
+				is= getBaseContext().getResources().openRawResource(R.raw.cubemtl);
+				input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+			}
+			else{
+				f = new File(filename);
+				fis = new FileInputStream(f);
+				input =  new BufferedReader(new InputStreamReader(fis), 1024*8);
+				Log.d("INPUT", input.toString());
+			}
 			try{
 				String line = null;
 				while ((line = input.readLine()) != null){
@@ -428,7 +475,7 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private void readFile(String filename){
+	private void readFile(String filename, boolean resource){
 		String str;
 		float x, y, z, dist;
 		float max = 0;
@@ -436,9 +483,20 @@ public class MainActivity extends Activity {
 		int f = 0;
 		int j;
 		Material mat = null;
-		try {			
-			InputStream is = getBaseContext().getResources().openRawResource(R.raw.cubeobj); //TODO: Open file, not raw
-			BufferedReader input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+		InputStream is;
+		FileInputStream fis;
+		BufferedReader input;
+		File file;
+		try{
+			if (resource){
+				is= getBaseContext().getResources().openRawResource(R.raw.cubeobj);
+				input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+			}
+			else{
+				file = new File(filename);
+				fis = new FileInputStream(file);
+				input =  new BufferedReader(new InputStreamReader(fis), 1024*8);
+			}
 			try {
 				String line = null; 
 				while ((line = input.readLine()) != null){
