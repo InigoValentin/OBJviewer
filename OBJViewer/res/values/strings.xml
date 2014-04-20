@@ -26,6 +26,9 @@
     <string name="explorer_reload">Reload</string>
     <string name="explorer_file_singular"> file</string>
     <string name="explorer_file_plural"> files</string>
+    <string name="explorer_mtl">.mtl</string>
+    <string name="explorer_details_mtl">%1$s bytes, %2$s vertices, %3$s faces, %4$s materials.</string>
+    <string name="explorer_details_nomtl">%1$s bytes, %2$s vertices, %3$s faces.</string>
     
     <string name="toast_file_saved">File saved: </string>
     <string name="toast_file_error">Unable to save image</string>

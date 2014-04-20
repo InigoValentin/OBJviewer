@@ -12,7 +12,7 @@
         android:importantForAccessibility="no"
         android:maxHeight="70dp"
         android:maxWidth="70dp"
-        android:src="@drawable/folder" />
+        android:src="@drawable/file" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -24,26 +24,27 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/tvFolderName"
+                android:id="@+id/tvFileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tvFolderCount"
+                android:id="@+id/tvFileMtl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:background="@color/red"
+                android:background="@color/orange"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:textColor="@color/white"
+                android:text="@string/explorer_mtl"
+                android:textColor="@color/dark_gray"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvFolderPath"
+            android:id="@+id/tvFileDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
