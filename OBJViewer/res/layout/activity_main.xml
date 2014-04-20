@@ -26,12 +26,12 @@
                 android:text="@string/menu_open" />
 
             <CheckBox
-                android:id="@+id/cbDrawVertizes"
+                android:id="@+id/cbDrawVertices"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="center_vertical"
                 android:checked="true"
-                android:text="@string/menu_draw_vertizes" />
+                android:text="@string/menu_draw_vertices" />
 
             <LinearLayout
                 android:id="@+id/llVertexPreferences"
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="18dp"
                     android:layout_gravity="bottom"
-                    android:text="@string/menu_size_vertizes"
+                    android:text="@string/menu_size_vertices"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <SeekBar
@@ -60,7 +60,7 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:text="@string/menu_color_verizes" />
+                    android:text="@string/menu_color_vertices" />
 
             </LinearLayout>
             

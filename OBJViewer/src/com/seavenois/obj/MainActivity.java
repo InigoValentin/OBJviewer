@@ -37,7 +37,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 	//Static variables
-	static final int MAX_VERTIZES = 100000;		//Max number of vertices in file
+	static final int MAX_VERTICES = 100000;		//Max number of vertices in file
 	static final int MAX_FACES = 100000;		//Max number of faces in file
 	static final int MAX_MATERIALS = 100;		//Max number of materials in file
 	
@@ -50,17 +50,17 @@ public class MainActivity extends Activity {
 	ImageView ivCanvas;
 	Button btLoadModel;
 	LinearLayout llVertexPreferences, llEdgePreferences, llFacePreferences;
-	CheckBox cbDrawVertizes, cbDrawEdges, cbDrawFaces;
+	CheckBox cbDrawVertices, cbDrawEdges, cbDrawFaces;
 	TextView tvVertexColor, tvEdgeColor, tvFaceColor;
 	SeekBar sbEdgeSize, sbVertexSize;
 	
 	MainLayout mLayout;
-	Vertex[] vert = new Vertex[MAX_VERTIZES];
+	Vertex[] vert = new Vertex[MAX_VERTICES];
 	Face[] face = new Face[MAX_FACES];
 	Material[] material = new Material[MAX_MATERIALS];
 	int totalVerts, totalFaces, totalMaterials;
 	boolean touching = false;
-	float prevX, prevY;
+	float prevX, prevY, prevDist = -1;
 	
 	//Useful measures
 	float scale = 40;
@@ -71,8 +71,8 @@ public class MainActivity extends Activity {
 	//Colors
 	Color colorVertex, colorEdge, colorFace;
 	
-	//Booleans to determine wich elements to draw
-	boolean drawVertizes = true;
+	//Booleans to determine which elements to draw
+	boolean drawVertices = true;
 	boolean drawEdges = true;
 	boolean drawFaces = true;
 	
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
 		mLayout = (MainLayout) findViewById(R.id.main_layout);
 		btLoadModel = (Button) findViewById(R.id.btLoadModel);
-		cbDrawVertizes = (CheckBox) findViewById(R.id.cbDrawVertizes);
+		cbDrawVertices = (CheckBox) findViewById(R.id.cbDrawVertices);
 		cbDrawEdges = (CheckBox) findViewById(R.id.cbDrawEdges);
 		cbDrawFaces = (CheckBox) findViewById(R.id.cbDrawFaces);
 		llVertexPreferences = (LinearLayout) findViewById(R.id.llVertexPreferences);
@@ -125,16 +125,16 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		cbDrawVertizes.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+		cbDrawVertices.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
 				if (isChecked == true){
 					llVertexPreferences.setVisibility(View.VISIBLE);
-					drawVertizes = true;
+					drawVertices = true;
 				}
 				else{
 					llVertexPreferences.setVisibility(View.GONE);
-					drawVertizes = false;
+					drawVertices = false;
 				}
 				draw();
 			}
@@ -260,6 +260,7 @@ public class MainActivity extends Activity {
 					return false;
 				switch (event.getAction()) {
 					case MotionEvent.ACTION_DOWN:
+						
 						touching = true;
 						prevX = event.getX();
 						prevY = event.getY();
@@ -268,12 +269,19 @@ public class MainActivity extends Activity {
 						touching = false;
 						break;
 					case MotionEvent.ACTION_MOVE:
-						if (touching){
-							rotateX(prevX - event.getX());
-							rotateY(prevY - event.getY());
-							draw();
-							prevX = event.getX();
-							prevY = event.getY();
+						if (event.getPointerCount() == 1){
+							if (touching){
+								rotateX(prevX - event.getX());
+								rotateY(prevY - event.getY());
+								draw();
+								prevX = event.getX();
+								prevY = event.getY();
+							}
+						}
+						else if (event.getPointerCount() > 1){
+							float dist = (float) Math.sqrt(Math.abs((event.getX(1) - event.getX(0)) * (event.getX(1) - event.getX(0) + (event.getY(1) - event.getY(0)) * (event.getY(1) - event.getY(0)))));
+							zoom(prevDist - dist);
+							prevDist = dist;
 						}
 						break;
 				}
@@ -294,6 +302,15 @@ public class MainActivity extends Activity {
 		Bitmap bmp = createBitMap();
 		//Draw the image
 		ivCanvas.setImageBitmap(bmp);
+	}
+	
+	public void zoom(float factor){
+		//TODO: Improve
+		if (factor > 0)
+			scale = (float) (scale * 0.9);
+		else if (factor < 0)
+			scale = (float) (scale * 1.2);
+		draw();
 	}
 	
 	public void rotateX(float des){
@@ -341,13 +358,13 @@ public class MainActivity extends Activity {
 			x = (int) (w / 2 + face[f].getVertex(0).getX() * scale);
 			y = (int) (h / 2 + face[f].getVertex(0).getY() * scale);
 			path.moveTo(x, y);
-			if (drawVertizes)
+			if (drawVertices)
 				canvas.drawCircle(x, y, vertexWidth, paintVert);
 			for (int v = 1; v < face[f].getVertexCount(); v ++){
 				x = (int) (w / 2 + face[f].getVertex(v).getX() * scale);
 				y = (int) (h / 2 + face[f].getVertex(v).getY() * scale);
 				path.lineTo(x, y);
-				if (drawVertizes)
+				if (drawVertices)
 					canvas.drawCircle(x, y, vertexWidth, paintVert);
 			}
 			if (drawFaces){

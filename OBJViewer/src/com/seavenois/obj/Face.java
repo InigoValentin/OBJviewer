@@ -4,9 +4,9 @@ import android.util.Log;
 
 public class Face implements Comparable<Face>{
 	
-	static final int MAX_VERTIZES = 64;
+	static final int MAX_VERTICES = 64;
 	
-	Vertex[] vert = new Vertex[MAX_VERTIZES];
+	Vertex[] vert = new Vertex[MAX_VERTICES];
 	Material mat;
 	int vertexCount;
 	
@@ -30,17 +30,17 @@ public class Face implements Comparable<Face>{
 			return true;
 	}
 	public void addVertex(Vertex v){
-		if (vertexCount < MAX_VERTIZES){
+		if (vertexCount < MAX_VERTICES){
 			vert[vertexCount] = v;
 			vertexCount ++;
 		}
 		else{
-			Log.e("Face error", "Unable to add more than " + Integer.toString(MAX_VERTIZES) + " vertizes");
+			Log.e("Face error", "Unable to add more than " + Integer.toString(MAX_VERTICES) + " vertices");
 		}
 	}
 	
 	public Vertex getVertex(int i){
-		if (i >= MAX_VERTIZES)
+		if (i >= MAX_VERTICES)
 			Log.w("Face warning", "Requesting null vertex " + Integer.toString(i));
 		return vert[i];
 	}
@@ -56,14 +56,14 @@ public class Face implements Comparable<Face>{
 		float sum = .0f;
 		
 		while (i <  this.getVertexCount()){
-			sum = sum + this.getVertex(i).getZ();//lhparseFloat(vert[a[i]][2]);
+			sum = sum + this.getVertex(i).getZ();
 			i = i + 1;
 		}
 		lZ = sum / i;
 		i = 0;
 		sum = 0;
 		while (i <  another.getVertexCount()){
-			sum = sum + another.getVertex(i).getZ();//lhparseFloat(vert[a[i]][2]);
+			sum = sum + another.getVertex(i).getZ();
 			i = i + 1;
 		}
 		rZ = sum / i;
