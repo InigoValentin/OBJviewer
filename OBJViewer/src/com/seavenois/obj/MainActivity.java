@@ -4,16 +4,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -37,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -46,6 +50,7 @@ public class MainActivity extends Activity {
 	static final int MAX_MATERIALS = 100;		//Max number of materials in file
 	
 	//Codes passed to ColorActivity activity. Can be anything.
+	static final int CODE_MODEL = 1802;
 	static final int CODE_COLOR_VERTEX = 1803;	
 	static final int CODE_COLOR_EDGE = 1804;
 	static final int CODE_COLOR_FACE = 1805;
@@ -53,7 +58,7 @@ public class MainActivity extends Activity {
 	
 	//UI elements
 	ImageView ivCanvas;
-	Button btLoadModel;
+	Button btLoadModel, btScreenshot, btSettings, btAbout;
 	LinearLayout llVertexPreferences, llEdgePreferences, llFacePreferences, llBackgroundPreferences;
 	CheckBox cbDrawVertices, cbDrawEdges, cbDrawFaces, cbDrawBackground, cbUseMaterial;
 	TextView tvVertexColor, tvEdgeColor, tvFaceColor, tvBackgroundColor;
@@ -111,8 +116,11 @@ public class MainActivity extends Activity {
 		
 		//Assign elements
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
-		mLayout = (MainLayout) findViewById(R.id.main_layout);
+		mLayout = (MainLayout) findViewById(R.id.mainLayout);
 		btLoadModel = (Button) findViewById(R.id.btLoadModel);
+		btScreenshot = (Button) findViewById(R.id.btScreenshot);
+		btSettings = (Button) findViewById(R.id.btSettings);
+		btAbout = (Button) findViewById(R.id.btAbout);
 		cbDrawVertices = (CheckBox) findViewById(R.id.cbDrawVertices);
 		cbDrawEdges = (CheckBox) findViewById(R.id.cbDrawEdges);
 		cbDrawFaces = (CheckBox) findViewById(R.id.cbDrawFaces);
@@ -132,6 +140,25 @@ public class MainActivity extends Activity {
 		
 		//Assign listeners for ui elements
 		btLoadModel.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent i = new Intent(getBaseContext(), ExplorerActivity.class);
+				startActivityForResult(i, CODE_MODEL);
+			}
+		});
+		btScreenshot.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				screenshot();
+			}
+		});
+		btSettings.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				//TODO
+			}
+		});
+		btAbout.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
 				//TODO
@@ -194,6 +221,7 @@ public class MainActivity extends Activity {
 				draw();			
 			}
 		});
+		
 		cbUseMaterial.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -402,6 +430,7 @@ public class MainActivity extends Activity {
 			readFile(null, true);
 		}
 		draw();
+		reload();
 	}
 
 	public boolean fileExists(String filename){
@@ -418,6 +447,44 @@ public class MainActivity extends Activity {
 		Bitmap bmp = createBitMap();
 		//Draw the image
 		ivCanvas.setImageBitmap(bmp);
+	}
+	
+	public void screenshot(){
+		Arrays.sort(face, 0, totalFaces);
+		//TODO: Calculate a new scale
+		Bitmap bmp = createBitMap();
+		
+		File dir = new File(Environment.getExternalStorageDirectory() + "/Pictures/ObjViewer"); 
+
+	    //Create directory if it does not exist
+	    if (dir.exists() == false)
+	    	if (dir.mkdirs() == false){
+	    		Log.e("I/O error", "Error creating directory " + dir.getPath());
+				return;
+	    	}
+
+	    // Create a media file name
+	    String ts = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+	    String fName = ts +".png";
+	    File file = new File(dir.getPath() + File.separator + fName);  
+		
+		try{
+			FileOutputStream fos = new FileOutputStream(file);
+			bmp.compress(Bitmap.CompressFormat.PNG, 90, fos);
+			fos.close();
+			Toast toast = Toast.makeText(this, getString(R.string.toast_file_saved) + dir.getPath() + File.separator + fName, Toast.LENGTH_LONG);
+			toast.show();
+		}
+		catch (FileNotFoundException e) {
+			Log.d("I/O error", "File not found: " + e.getMessage());
+			Toast toast = Toast.makeText(this, getString(R.string.toast_file_error) + dir.getPath() + File.separator + fName, Toast.LENGTH_LONG);
+			toast.show();
+		}
+		catch (IOException e) {
+			Log.d("I/O error", "Unable to open file: " + e.getMessage());
+			Toast toast = Toast.makeText(this, getString(R.string.toast_file_error) + dir.getPath() + File.separator + fName, Toast.LENGTH_LONG);
+			toast.show();
+		}  
 	}
 	
 	public void zoom(float factor){
@@ -764,6 +831,10 @@ public class MainActivity extends Activity {
 			}
 			break;
 		}
+	}
+	
+	public void reload(){
+		new Reload(this, null, null).execute();
 	}
 	
 	/*@Override

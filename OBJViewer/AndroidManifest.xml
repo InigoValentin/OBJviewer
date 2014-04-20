@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.seavenois.obj.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" android:icon="@drawable/ic_launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,6 +41,7 @@
             android:excludeFromRecents="true">
             
         </activity>
+        <activity android:name="com.seavenois.obj.ExplorerActivity"></activity>
     </application>
 
 </manifest>

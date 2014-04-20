@@ -22,6 +22,12 @@
     <string name="menu_size_edges">Edges size</string>
     <string name="menu_use_material">Use material</string>
     
+    <string name="explorer_header">obj files</string>
+    <string name="explorer_reload">Reload</string>
+    
+    <string name="toast_file_saved">File saved: </string>
+    <string name="toast_file_error">Unable to save image</string>
+    
     <string name="color_red">Red</string>
     <string name="color_green">Green</string>
     <string name="color_blue">Blue</string>
