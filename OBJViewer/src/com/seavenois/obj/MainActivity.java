@@ -222,6 +222,7 @@ public class MainActivity extends Activity {
 		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvVertexColor.setCompoundDrawables(daux ,null, null, null);
+		tvVertexColor.setCompoundDrawablePadding(10);
 		conf = Bitmap.Config.ARGB_8888;
 		bmp = Bitmap.createBitmap(50, 50, conf);
 		canvas = new Canvas(bmp);
@@ -232,6 +233,7 @@ public class MainActivity extends Activity {
 		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvEdgeColor.setCompoundDrawables(daux ,null, null, null);
+		tvEdgeColor.setCompoundDrawablePadding(10);
 		conf = Bitmap.Config.ARGB_8888;
 		bmp = Bitmap.createBitmap(50, 50, conf);
 		canvas = new Canvas(bmp);
@@ -242,6 +244,7 @@ public class MainActivity extends Activity {
 		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvFaceColor.setCompoundDrawables(daux ,null, null, null);
+		tvFaceColor.setCompoundDrawablePadding(10);
 		conf = Bitmap.Config.ARGB_8888;
 		bmp = Bitmap.createBitmap(50, 50, conf);
 		canvas = new Canvas(bmp);
@@ -251,7 +254,8 @@ public class MainActivity extends Activity {
         canvas.drawRect(0, 0, 50, 50, paint);
 		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
-		tvBackgroundColor.setCompoundDrawables(daux ,null, null, null);	
+		tvBackgroundColor.setCompoundDrawables(daux ,null, null, null);
+		tvBackgroundColor.setCompoundDrawablePadding(10);
 		tvVertexColor.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -331,7 +335,7 @@ public class MainActivity extends Activity {
 				DisplayMetrics metrics = new DisplayMetrics();
 				getWindowManager().getDefaultDisplay().getMetrics(metrics);
 				int w = metrics.widthPixels;
-				if (event.getX() < 0.1 * w)
+				if (event.getX() < 0.1 * w || mLayout.isMenuShown())
 					return false;
 				switch (event.getAction()) {
 					case MotionEvent.ACTION_DOWN:
@@ -461,7 +465,7 @@ public class MainActivity extends Activity {
         if (drawBackground)
             paintBackground.setARGB(colorBackground.getA(), colorBackground.getR(), colorBackground.getG(), colorBackground.getB());
         else
-            paintBackground.setColor(android.graphics.Color.WHITE); //If not white
+            paintBackground.setColor(android.graphics.Color.BLACK); //If not black
         canvas.drawRect(0, 0, w, h, paintBackground);
 		for (int f = 0; f < totalFaces; f ++){
 			path = new Path();

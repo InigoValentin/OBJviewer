@@ -6,6 +6,9 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="menu_open">Open file</string>
+    <string name="menu_snap">Snapshot</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
     <string name="menu_draw_vertices">Vertizes</string>
     <string name="menu_draw_edges">Edges</string>
     <string name="menu_draw_faces">Faces</string>

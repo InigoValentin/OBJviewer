@@ -6,6 +6,6 @@
     
     <color name="background_app">#ccffaa</color>
     <color name="background_sections">#88ee66</color>
-    <color name="background_menu">#99ff77</color>
+    <color name="background_menu">#888888</color>
     <color name="background_bar">#88ee66</color>
 </resources>
