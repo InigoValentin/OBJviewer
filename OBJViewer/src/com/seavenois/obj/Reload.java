@@ -42,7 +42,7 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		long fieldSize;
 		//Assign some fields
 		fieldFile = file.getAbsolutePath();
-		fieldPath = file.getPath();
+		fieldPath = file.getParent();
 		fieldFname = file.getName();
 		fieldSize = file.length();
 		

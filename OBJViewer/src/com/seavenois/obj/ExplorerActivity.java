@@ -62,12 +62,23 @@ public class ExplorerActivity extends Activity{
 		Cursor cur;
 		
 		//Search for the ones in db and delete the ones that dont exist
-		cur = db.rawQuery("SELECT file, path, fname, size, vertices, faces, mtl, materials, name FROM model", null);
+		cur = db.rawQuery("SELECT count(file), path FROM model GROUP BY path;", null);
 		cur.moveToFirst();
+		View row = null;
+		TextView tvName, tvPath, tvCount;
 		while (cur.isAfterLast() == false){
-			file = new File(cur.getString(0));
-			if (file.exists())
-				Log.d("FILE LISTED", file.getAbsolutePath());
+			row = getLayoutInflater().inflate(R.layout.row_directory, null);
+			tvName = (TextView) row.findViewById(R.id.tvFolderName);
+			tvPath = (TextView) row.findViewById(R.id.tvFolderPath);
+			tvCount = (TextView) row.findViewById(R.id.tvFolderCount);
+			if (cur.getInt(0) == 1)
+				tvCount.setText(cur.getString(0) + getString(R.string.explorer_file_singular));
+			else
+				tvCount.setText(cur.getString(0) + getString(R.string.explorer_file_plural));
+			tvName.setText(cur.getString(1).substring(cur.getString(1).lastIndexOf("/")));
+			tvPath.setText(cur.getString(1).substring(0, cur.getString(1).lastIndexOf("/")));
+			//TODO: Add touch listener to row
+			llContent.addView(row);
 			cur.moveToNext();
     	}
 		

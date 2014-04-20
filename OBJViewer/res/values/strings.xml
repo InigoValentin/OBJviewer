@@ -24,6 +24,8 @@
     
     <string name="explorer_header">obj files</string>
     <string name="explorer_reload">Reload</string>
+    <string name="explorer_file_singular"> file</string>
+    <string name="explorer_file_plural"> files</string>
     
     <string name="toast_file_saved">File saved: </string>
     <string name="toast_file_error">Unable to save image</string>
