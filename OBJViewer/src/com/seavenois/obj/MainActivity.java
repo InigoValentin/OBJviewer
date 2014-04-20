@@ -47,14 +47,15 @@ public class MainActivity extends Activity {
 	static final int CODE_COLOR_VERTEX = 1803;	
 	static final int CODE_COLOR_EDGE = 1804;
 	static final int CODE_COLOR_FACE = 1805;
+	static final int CODE_COLOR_BACKGROUND = 1806;
 	
 	//UI elements
 	ImageView ivCanvas;
 	Button btLoadModel;
-	LinearLayout llVertexPreferences, llEdgePreferences, llFacePreferences;
-	CheckBox cbDrawVertices, cbDrawEdges, cbDrawFaces;
-	TextView tvVertexColor, tvEdgeColor, tvFaceColor;
-	SeekBar sbEdgeSize, sbVertexSize;
+	LinearLayout llVertexPreferences, llEdgePreferences, llFacePreferences, llBackgroundPreferences;
+	CheckBox cbDrawVertices, cbDrawEdges, cbDrawFaces, cbDrawBackground, cbUseMaterial;
+	TextView tvVertexColor, tvEdgeColor, tvFaceColor, tvBackgroundColor;
+	SeekBar sbEdgeSize, sbVertexSize, sbAlpha;
 	
 	MainLayout mLayout;
 	Vertex[] vert = new Vertex[MAX_VERTICES];
@@ -69,14 +70,16 @@ public class MainActivity extends Activity {
 	float rotationSpeed = 90;
 	int vertexWidth = 3;
 	int edgeWidth = 2;
+	int alpha = 120;
 	
 	//Colors
-	Color colorVertex, colorEdge, colorFace;
+	Color colorVertex, colorEdge, colorFace, colorBackground;
 	
 	//Booleans to determine which elements to draw
 	boolean drawVertices = true;
 	boolean drawEdges = true;
 	boolean drawFaces = true;
+	boolean drawBackground = true;
 	
 	//Booleans to determine if material file is present, and if it is to be used
 	boolean mtlFilePresent;
@@ -106,7 +109,8 @@ public class MainActivity extends Activity {
 		//Init colors
 		colorVertex = new Color(100, 0, 0, 255);
 		colorEdge = new Color(0, 0, 0, 255);
-		colorFace = new Color(0, 0, 255, 255);
+		colorFace = new Color(0, 0, 255, alpha);
+		colorBackground = new Color(50, 50, 50, 255);
 		
 		//Assign elements
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
@@ -115,14 +119,19 @@ public class MainActivity extends Activity {
 		cbDrawVertices = (CheckBox) findViewById(R.id.cbDrawVertices);
 		cbDrawEdges = (CheckBox) findViewById(R.id.cbDrawEdges);
 		cbDrawFaces = (CheckBox) findViewById(R.id.cbDrawFaces);
+		cbDrawBackground = (CheckBox) findViewById(R.id.cbDrawBackground);
+		cbUseMaterial = (CheckBox) findViewById(R.id.cbUseMaterial);
 		llVertexPreferences = (LinearLayout) findViewById(R.id.llVertexPreferences);
 		llEdgePreferences = (LinearLayout) findViewById(R.id.llEdgePreferences);
 		llFacePreferences = (LinearLayout) findViewById(R.id.llFacePreferences);
+		llBackgroundPreferences = (LinearLayout) findViewById(R.id.llBackgroundPreferences);
 		tvVertexColor = (TextView) findViewById(R.id.tvVertexColor);
 		tvEdgeColor = (TextView) findViewById(R.id.tvEdgeColor);
 		tvFaceColor = (TextView) findViewById(R.id.tvFaceColor);
+		tvBackgroundColor = (TextView) findViewById(R.id.tvBackgroundColor);
 		sbVertexSize = (SeekBar) findViewById(R.id.sbVertexSize);
 		sbEdgeSize = (SeekBar) findViewById(R.id.sbEdgeSize);
+		sbAlpha = (SeekBar) findViewById(R.id.sbAlpha);
 		
 		//Assign listeners for ui elements
 		btLoadModel.setOnClickListener(new OnClickListener(){
@@ -174,6 +183,34 @@ public class MainActivity extends Activity {
 				draw();			
 			}
 		});
+		cbDrawBackground.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				if (isChecked == true){
+					llBackgroundPreferences.setVisibility(View.VISIBLE);
+					drawBackground = true;
+				}
+				else{
+					llBackgroundPreferences.setVisibility(View.GONE);
+					drawBackground = false;
+				}
+				draw();			
+			}
+		});
+		cbUseMaterial.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				if (isChecked == true){
+					tvFaceColor.setVisibility(View.GONE);
+					useMaterial = true;
+				}
+				else{
+					tvFaceColor.setVisibility(View.VISIBLE);
+					useMaterial = false;
+				}
+				draw();			
+			}
+		});
 		
 		conf = Bitmap.Config.ARGB_8888;
 		bmp = Bitmap.createBitmap(50, 50, conf);
@@ -205,6 +242,16 @@ public class MainActivity extends Activity {
 		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvFaceColor.setCompoundDrawables(daux ,null, null, null);
+		conf = Bitmap.Config.ARGB_8888;
+		bmp = Bitmap.createBitmap(50, 50, conf);
+		canvas = new Canvas(bmp);
+		paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setARGB(colorBackground.getA(), colorBackground.getR(), colorBackground.getG(), colorBackground.getB());
+        canvas.drawRect(0, 0, 50, 50, paint);
+		daux = new BitmapDrawable(getResources(), bmp);
+		daux.setBounds(0, 0, 50, 50);
+		tvBackgroundColor.setCompoundDrawables(daux ,null, null, null);	
 		tvVertexColor.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -226,6 +273,13 @@ public class MainActivity extends Activity {
 				startActivityForResult(i, CODE_COLOR_FACE);
 			}
 		});
+		tvBackgroundColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				startActivityForResult(i, CODE_COLOR_BACKGROUND);
+			}
+		});
 		
 		sbVertexSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
@@ -245,6 +299,20 @@ public class MainActivity extends Activity {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				edgeWidth = progress + 1;
+				draw();
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+			
+		});
+		sbAlpha.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				alpha = progress;
 				draw();
 			}
 
@@ -368,6 +436,7 @@ public class MainActivity extends Activity {
 	}
 	
 	private Bitmap createBitMap(){
+		//TODO: Draw bg first
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int h = metrics.heightPixels;
@@ -380,13 +449,20 @@ public class MainActivity extends Activity {
 		Paint paintVert = new Paint();
 		Paint paintEdge = new Paint();
 		Paint paintFace = new Paint();
+		Paint paintBackground = new Paint();
         paintVert.setStyle(Paint.Style.FILL);
         paintVert.setARGB(colorVertex.getA(), colorVertex.getR(), colorVertex.getG(), colorVertex.getB());
         paintEdge.setARGB(255, colorEdge.getR(), colorEdge.getG(), colorEdge.getB());
         paintEdge.setStyle(Paint.Style.STROKE);
         paintEdge.setStrokeWidth(edgeWidth);
         paintFace.setStyle(Paint.Style.FILL);
-        paintFace.setARGB(colorFace.getA(), colorFace.getR(), colorFace.getG(), colorFace.getB());
+        paintFace.setARGB(alpha, colorFace.getR(), colorFace.getG(), colorFace.getB());
+        paintBackground.setStyle(Paint.Style.FILL);
+        if (drawBackground)
+            paintBackground.setARGB(colorBackground.getA(), colorBackground.getR(), colorBackground.getG(), colorBackground.getB());
+        else
+            paintBackground.setColor(android.graphics.Color.WHITE); //If not white
+        canvas.drawRect(0, 0, w, h, paintBackground);
 		for (int f = 0; f < totalFaces; f ++){
 			path = new Path();
 			path.setFillType(Path.FillType.EVEN_ODD);
@@ -404,9 +480,9 @@ public class MainActivity extends Activity {
 			}
 			if (drawFaces){
 				if (useMaterial)
-					paintFace.setARGB(255, face[f].getMaterial().getColor().getR(), face[f].getMaterial().getColor().getG(), face[f].getMaterial().getColor().getB());
+					paintFace.setARGB(alpha, face[f].getMaterial().getColor().getR(), face[f].getMaterial().getColor().getG(), face[f].getMaterial().getColor().getB());
 				else
-					paintFace.setARGB(colorFace.getA(), colorFace.getR(), colorFace.getG(), colorFace.getB());
+					paintFace.setARGB(alpha, colorFace.getR(), colorFace.getG(), colorFace.getB());
 				canvas.drawPath(path, paintFace);
 			}
 			if(drawEdges)
@@ -647,6 +723,29 @@ public class MainActivity extends Activity {
 					Drawable daux = new BitmapDrawable(getResources(), bmp);
 					daux.setBounds(0, 0, 50, 50);
 					tvFaceColor.setCompoundDrawables(daux ,null, null, null);
+					draw();
+				}
+			}
+			break;
+		case (CODE_COLOR_BACKGROUND):
+			if (resultCode == Activity.RESULT_OK) {
+				r = data.getIntExtra("r", -1);
+				g = data.getIntExtra("g", -1);
+				b = data.getIntExtra("b", -1);
+				if(r != -1 && g != -1 && b != -1){
+					colorBackground.setR(r);
+					colorBackground.setG(g);
+					colorBackground.setB(b);
+					conf = Bitmap.Config.ARGB_8888;
+					bmp = Bitmap.createBitmap(50, 50, conf);
+					canvas = new Canvas(bmp);
+					paint = new Paint();
+			        paint.setStyle(Paint.Style.FILL);
+			        paint.setARGB(255, r, g, b);
+			        canvas.drawRect(0, 0, 50, 50, paint);
+					Drawable daux = new BitmapDrawable(getResources(), bmp);
+					daux.setBounds(0, 0, 50, 50);
+					tvBackgroundColor.setCompoundDrawables(daux ,null, null, null);
 					draw();
 				}
 			}

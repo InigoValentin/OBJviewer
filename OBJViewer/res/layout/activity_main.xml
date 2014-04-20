@@ -1,8 +1,7 @@
 <com.seavenois.obj.MainLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_menu" >
+    android:layout_height="match_parent" >
 	
     <!-- Slider menu -->
 
@@ -25,6 +24,36 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/menu_open" />
 
+            
+            
+            <CheckBox
+                android:id="@+id/cbDrawBackground"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:checked="true"
+                android:text="@string/menu_draw_background" />
+
+            <LinearLayout
+                android:id="@+id/llBackgroundPreferences"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tvBackgroundColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/menu_color_background" />
+
+            </LinearLayout>
+            
+            
+            
+            
             <CheckBox
                 android:id="@+id/cbDrawVertices"
                 android:layout_width="fill_parent"
@@ -117,6 +146,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:orientation="vertical" >
+                
+                <CheckBox
+	                android:id="@+id/cbUseMaterial"
+	                android:layout_width="fill_parent"
+	                android:layout_height="60dp"
+	                android:layout_gravity="center_vertical"
+	                android:checked="true"
+	                android:text="@string/menu_use_material" />
 
                 <TextView
                     android:id="@+id/tvFaceColor"
@@ -124,7 +161,23 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:text="@string/menu_color_faces" />
+                    android:text="@string/menu_color_faces"
+                    android:visibility="gone" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:text="@string/menu_alpha"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <SeekBar
+                    android:id="@+id/sbAlpha"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_gravity="top"
+                    android:max="255"
+                    android:progress="120" />
 
             </LinearLayout>
             
@@ -144,9 +197,7 @@
 		    android:id="@+id/ivCanvas"
 		    android:layout_width="fill_parent"
 		    android:layout_height="fill_parent"
-		    android:background="@color/dark_gray"
-		    android:importantForAccessibility="no"
-		    android:src="@drawable/ic_launcher" />
+		    android:importantForAccessibility="no" />
 		
 	</LinearLayout>
 
