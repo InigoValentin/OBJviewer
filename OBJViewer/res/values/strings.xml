@@ -24,6 +24,7 @@
     
     <string name="explorer_header">obj files</string>
     <string name="explorer_reload">Reload</string>
+    <string name="explorer_back">Back</string>
     <string name="explorer_file_singular"> file</string>
     <string name="explorer_file_plural"> files</string>
     <string name="explorer_mtl">.mtl</string>

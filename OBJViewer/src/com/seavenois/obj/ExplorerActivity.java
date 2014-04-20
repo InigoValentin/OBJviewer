@@ -1,6 +1,5 @@
 package com.seavenois.obj;
 
-import java.io.File;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -10,7 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -22,7 +21,7 @@ public class ExplorerActivity extends Activity{
 	LinearLayout llContent;
 	ProgressBar pbReload;
 	ImageView ivReload;
-	Button btBack;
+	ImageButton btBack;
 	TextView tvHeader;
 	
 	@Override
@@ -39,14 +38,14 @@ public class ExplorerActivity extends Activity{
 		llContent = (LinearLayout) findViewById(R.id.llExplorerContent);
 		pbReload = (ProgressBar) findViewById(R.id.pbReload);
 		ivReload = (ImageView) findViewById(R.id.ivReload);
-		btBack = (Button) findViewById(R.id.btBack);
+		btBack = (ImageButton) findViewById(R.id.btBack);
 		tvHeader = (TextView) findViewById(R.id.tvExplorerHeader);
 		
 		//Set listeners
 		btBack.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				// TODO 				
+				loadFolders();				
 			}
 		});
 		
@@ -63,6 +62,12 @@ public class ExplorerActivity extends Activity{
 	private void loadFolders(){
 		//Set variable
 		rootView = true;
+		
+		//Set title
+		tvHeader.setText(R.string.explorer_header);
+		
+		//Hide button
+		btBack.setVisibility(View.GONE);
 		
 		//Clean layout
 		llContent.removeAllViews();
@@ -85,8 +90,8 @@ public class ExplorerActivity extends Activity{
 				tvCount.setText(cur.getString(0) + getString(R.string.explorer_file_singular));
 			else
 				tvCount.setText(cur.getString(0) + getString(R.string.explorer_file_plural));
-			tvName.setText(cur.getString(1).substring(cur.getString(1).lastIndexOf("/")));
-			tvPath.setText(cur.getString(1).substring(0, cur.getString(1).lastIndexOf("/")));
+			tvName.setText(cur.getString(1).substring(cur.getString(1).lastIndexOf("/") + 1));
+			tvPath.setText(cur.getString(1).substring(0, cur.getString(1).lastIndexOf("/")) + "/");
 			final String str = cur.getString(1);
 			row.setOnClickListener(new OnClickListener(){
 				@Override
@@ -103,6 +108,15 @@ public class ExplorerActivity extends Activity{
 	}
 	
 	private void openFolder(String path){
+		//Set variable
+		rootView = false;
+		
+		//Set title
+		tvHeader.setText(path.substring(path.lastIndexOf("/") + 1) + "/");
+		
+		//Show button
+		btBack.setVisibility(View.VISIBLE);
+		
 		//Clear layout
 		llContent.removeAllViews();
 		
@@ -111,7 +125,7 @@ public class ExplorerActivity extends Activity{
 		Cursor cur;
 		
 		//Search for the ones in db and delete the ones that dont exist
-		cur = db.rawQuery("SELECT file, path, fname, size, vertices, faces, mtl, materials, name FROM model WHERE path = '" + path + "';", null);
+		cur = db.rawQuery("SELECT file, path, fname, size, vertices, faces, mtl, materials FROM model WHERE path = '" + path + "';", null);
 		View row = null;
 		String str;
 		TextView tvName, tvDetail, tvMtl;
@@ -136,7 +150,7 @@ public class ExplorerActivity extends Activity{
 				@Override
 				public void onClick(View v) {
 					//TODO
-					Log.d("Selectef file", st);
+					Log.d("Selected file", st);
 				}
 			});
 			llContent.addView(row);
@@ -153,7 +167,7 @@ public class ExplorerActivity extends Activity{
 	
 	@Override
 	public void onBackPressed() {
-		if (rootView != false)
+		if (rootView == false)
 			loadFolders();
 		else
 			super.onBackPressed();

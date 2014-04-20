@@ -17,10 +17,16 @@
             android:layout_height="match_parent"
             android:layout_weight=".3" >
 
-            <Button
+            <ImageButton
                 android:id="@+id/btBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/explorer_back"
+                android:maxHeight="45dp"
+                android:maxWidth="45dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back"
                 android:visibility="gone" />
 
             <TextView
