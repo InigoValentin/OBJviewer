@@ -12,6 +12,8 @@ import java.util.Arrays;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -93,12 +95,7 @@ public class MainActivity extends Activity {
 	    //Set layout
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		final Intent intent = getIntent();
-
-		final String action = intent.getAction();
-		Log.d("ACTION", action);
-		
+				
 		//Useful variables
 		Drawable daux;
 		Bitmap.Config conf;
@@ -260,6 +257,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v){
 				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", colorVertex.getR());
+				i.putExtra("g", colorVertex.getG());
+				i.putExtra("b", colorVertex.getB());
 				startActivityForResult(i, CODE_COLOR_VERTEX);
 			}
 		});
@@ -267,6 +267,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v){
 				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", colorEdge.getR());
+				i.putExtra("g", colorEdge.getG());
+				i.putExtra("b", colorEdge.getB());
 				startActivityForResult(i, CODE_COLOR_EDGE);
 			}
 		});
@@ -274,6 +277,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v){
 				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", colorFace.getR());
+				i.putExtra("g", colorFace.getG());
+				i.putExtra("b", colorFace.getB());
 				startActivityForResult(i, CODE_COLOR_FACE);
 			}
 		});
@@ -281,6 +287,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v){
 				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", colorBackground.getR());
+				i.putExtra("g", colorBackground.getG());
+				i.putExtra("b", colorBackground.getB());
 				startActivityForResult(i, CODE_COLOR_BACKGROUND);
 			}
 		});
@@ -756,4 +765,11 @@ public class MainActivity extends Activity {
 			break;
 		}
 	}
+	
+	/*@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		draw();
+	    super.onConfigurationChanged(newConfig);
+	    	
+	}*/
 }

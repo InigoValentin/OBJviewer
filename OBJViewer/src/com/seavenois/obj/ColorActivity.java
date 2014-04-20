@@ -2,6 +2,8 @@ package com.seavenois.obj;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -27,7 +30,7 @@ public class ColorActivity extends Activity{
 	
 	//Color values
 	int r, g, b;
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//Remove title bar
@@ -118,13 +121,33 @@ public class ColorActivity extends Activity{
 			public void onStopTrackingTouch(SeekBar seekBar) {}
 			
 		});
+		
+		//Set orientation
+		LinearLayout ll = (LinearLayout) findViewById(R.id.llColorActivity);
+	    int orientation = getResources().getConfiguration().orientation;
+	    if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+	    	ll.setOrientation(LinearLayout.VERTICAL);
+	    else if (orientation == 2) //TODO: No constant
+	    	ll.setOrientation(LinearLayout.HORIZONTAL);
+		
+		//Get extra and move seek bars
+	    Intent intent = getIntent();
+	    sbR.setProgress(intent.getIntExtra("r", 0));
+	    sbG.setProgress(intent.getIntExtra("g", 0));
+	    sbB.setProgress(intent.getIntExtra("b", 0));
+	    preview();
 	}
 	
 	public void preview(){
 		int w = ivPreview.getWidth();
 		int h = ivPreview.getHeight();
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-		Bitmap bmp = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
+		//Failsafe for the first time, when ivPreview properties are not loaded
+		if (w <= 0)
+			w = 80;
+		if (h <= 0)
+			h = 80;
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+		Bitmap bmp = Bitmap.createBitmap(w, h, conf);
 		Canvas canvas = new Canvas(bmp);
 		Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
@@ -145,5 +168,17 @@ public class ColorActivity extends Activity{
 	            setResult(resultCode);
 	        }
 	    }
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    super.onConfigurationChanged(newConfig);
+	    LinearLayout ll = (LinearLayout) findViewById(R.id.llColorActivity);
+	    int orientation = getResources().getConfiguration().orientation;
+	    if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+	    	ll.setOrientation(LinearLayout.VERTICAL);
+	    else if (orientation == 2) //TODO: No constant
+	    	ll.setOrientation(LinearLayout.HORIZONTAL);
+	    	
 	}
 }
