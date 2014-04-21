@@ -15,15 +15,27 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+/**
+ * Class extending {@link Activity} that provides a list of
+ * folders containing obj models, and allow to get into these
+ * folders and select a model to load.
+ */
 public class ExplorerActivity extends Activity{
 
-	boolean rootView;
-	LinearLayout llContent;
-	ProgressBar pbReload;
-	ImageView ivReload;
-	ImageButton btBack;
-	TextView tvHeader;
+	//Boolean indicating if the user is viewing the list of folder (true)
+	//or one specific folder (false).
+	private boolean rootView;
 	
+	//UI elements
+	private LinearLayout llContent;	//Linear layout where the content will be loaded.
+	private ProgressBar pbReload;	//ProgressBar, only shown when a Reload AsyncTask is running.
+	private ImageView ivReload;		//Acts as button to Reload AsyncTask. Hidden while its in progress.
+	private ImageButton btBack;		//Button to go back to the folder list. Only visible when in a specific folder.
+	private TextView tvHeader;		//Title. Standard in the folder view, the folder name otherwise.
+	
+	/*
+	 * Overridden method. Called when the activity is created.
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -56,9 +68,14 @@ public class ExplorerActivity extends Activity{
 			}
 		});
 		
+		//Load the folder View
 		loadFolders();
 	}
 	
+	/**
+	 * Loads the list of folders containing obj files. Called when the activity 
+	 * starts, and when coming back from a folder.
+	 */
 	private void loadFolders(){
 		//Set variable
 		rootView = true;
@@ -107,6 +124,11 @@ public class ExplorerActivity extends Activity{
 		db.close();
 	}
 	
+	/**
+	 * Loads the obj files in a specific folder, making them eligible to
+	 * load the model.
+	 * @param path The full path to the directory.
+	 */
 	private void openFolder(String path){
 		//Set variable
 		rootView = false;
@@ -161,10 +183,17 @@ public class ExplorerActivity extends Activity{
 		db.close();
 	}
 	
+	/**
+	 * Start a AsyncTask to find obj files in the storage directory and sub directories.
+	 */
 	public void reload(){
 		new Reload(this, ivReload, pbReload).execute();
 	}
 	
+	/*
+	 * Overridden method. If the user is viewing a specific folder,
+	 * go back to the folder list. Otherwise, do the normal stuff (finish activity).
+	 */
 	@Override
 	public void onBackPressed() {
 		if (rootView == false)

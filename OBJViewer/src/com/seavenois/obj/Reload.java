@@ -19,26 +19,63 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+/**
+ * Class extending {@link AsyncTask} to be run in the background.
+ * It searches for .obj files in the storage directory and maintains 
+ * a database with the ones that finds. 
+ */
 public class Reload extends AsyncTask<Void, Void, Void> {
 
-	Context context;
-	ImageView ivReload;
-	ProgressBar pbReload;
-	File[] file = new File[1000];
-	int fileIdx = 0;
+	private Context context;
+	private ImageView ivReload;
+	private ProgressBar pbReload;
+	private File[] file = new File[1000];
+	private int fileIdx = 0;
 	
+	/**
+	 * Class constructor.
+	 * 
+	 * @param ctx {@link Context} of the calling {@link Activity}.
+	 * 
+	 * @param iv An {@link ImageView} acting like a button to 
+	 * start the task and that will be replaced for the 
+	 * {@link ProgressBar} in the second parameter when the task starts. 
+	 * Must be passed only if the task is called from {@link ExplorerActivity}.
+	 *  
+	 * @param pb An {@link ProgressBar} that will be replaced for the 
+	 * {@link ImageView} in the first parameter when the task ends. Must be passed only
+	 * if the task is called from {@link ExplorerActivity}. 
+	 * 
+	 * @see Context
+	 * @see Activity
+	 * @see ImageView
+	 * @see ProgressBar
+	 * @see ExplorerActivity
+	 */
 	public Reload(Activity ctx, ImageView iv, ProgressBar pb) {
         this.context = ctx;
         this.ivReload = iv;
         this.pbReload = pb;
     }
 	
+	/**
+	 * Method that creates the database to store info about found models,
+	 * if it does not already created.
+	 */
 	protected void createDatabase(){
 		SQLiteDatabase db = context.openOrCreateDatabase(context.getFilesDir().getPath() + "/obj.sqlite", Context.MODE_PRIVATE, null);
 		db.execSQL("CREATE TABLE IF NOT EXISTS model (file VARCHAR(300), path VARCHAR(300),	fname VARCHAR(100), size BIGINT, vertices INT, faces INT, mtl BOOLEAN, materials INT);");
 		db.close();
 	}
 	
+	/**
+	 * Method that reads a obj file, getting info about the number of vertices, faces...
+	 * It also checks if a mtl file exists for the given obj file. If exists, it will
+	 * read from it the number of materials.
+	 * Then , it will insert or update all the data into the database.
+	 * @param file The .obj file.
+	 * @see File
+	 */
 	private void readFile(File file){
 		
 		Cursor cur;
@@ -141,6 +178,10 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		db.close();
 	}
 	
+	/**
+	 * For each file found, call the {@link readFile(File file)} method.
+	 * @see readFile(File file)
+	 */
 	private void populateFiles(){
 		int i = 0;
 		while (i < fileIdx){
@@ -149,6 +190,16 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		}
 	}
 	
+	/**
+	 * Recursive function that looks for files ending in ".obj" in a directory and
+	 * it's sub directories. For each found, a {@link Log} entry is written and
+	 * the file is added to the {@link File} array to be processed later by
+	 * {@link populateFiles()}
+	 * @param dir The tod dir to search for files
+	 * @see Log
+	 * @see File
+	 * @see populatedFiles()
+	 */
 	private void searchDirectory(File dir){
 		for (File child : dir.listFiles() ){
 			if (child.isFile()){
@@ -157,6 +208,7 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 				if (ext.equals(".obj")){
 					file[fileIdx] = child;
 					Log.i("File found", child.getAbsolutePath());
+					//Increase file counter
 					fileIdx ++;
 				}
 			}
@@ -166,6 +218,11 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		return;
 	}
 	
+	/*
+	 * Overridden method. Called before the task starts.
+	 * Shows and hide UI elements if necessary, and
+	 * writes an entry in the Log.
+	 */
 	@Override
 	protected void onPreExecute(){
 		if (ivReload != null)
@@ -175,6 +232,11 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		Log.i("Search files", "Starting obj file search");
 	}
 	
+	/*
+	 * Overridden method. Called after the task finishes.
+	 * Shows and hide UI elements if necessary, and
+	 * writes an entry in the Log.
+	 */
 	@Override
 	protected void onPostExecute(Void v){
 		if (ivReload != null)
@@ -184,6 +246,9 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		Log.i("Search files", "Search finished");
 	}
 	
+	/*
+	 * Overridden method. The task itself.
+	 */
 	@Override
 	protected Void doInBackground(Void... params) {
 		
@@ -204,10 +269,6 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 		
 		searchDirectory(Environment.getExternalStorageDirectory());
 		populateFiles();
-		//TODO: Recursively scan directories searching for obj files
-		//TODO: Check if they are in db
-		//TODO: Update if they are modified
-		//TODO: Add if not present in db
 		
 		cur.close();
 		db.close();

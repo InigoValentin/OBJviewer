@@ -9,23 +9,36 @@ import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
+/**
+ * A view extending LinearLayout, that includes a slider menu and the 
+ * model view area, and methods to display and show the menu.
+ */
 public class MainLayout extends LinearLayout {
 
-	private static final int SLIDING_DURATION = 500;
-	private static final int QUERY_INTERVAL = 16;
+	/**
+	 * The duration of the sliding animation
+	 */
+	public static final int SLIDING_DURATION = 500;
+	
+	/**
+	 * Parameter to wait between states
+	 */
+	public static final int QUERY_INTERVAL = 16;
+	
+	//UI elements
 	private int mainLayoutWidth;
 	private View menu;
 	private View content;
-	private static int menuRightMargin = 25;
-
-	public View getMenuView(){
-		return menu;
-	}
 	
+	//Percent of the screen that will not be covered by the menu. Will be overridden later.
+	private static int menuRightMargin = 25;
+	
+	//Enum with all posible states of the menu
 	private enum MenuState {
 		HIDING, HIDDEN, SHOWING, SHOWN,
 	};
 
+	//Useful variables
 	private int contentXOffset;
 	private MenuState currentMenuState = MenuState.HIDDEN;
 	private Scroller menuScroller = new Scroller(this.getContext(), new EaseInInterpolator());
@@ -35,14 +48,46 @@ public class MainLayout extends LinearLayout {
 	private boolean isDragging = false;
 	private int lastDiffX = 0;
 
+	/**
+	 * Class constructor. Just calls the {@link LinearLayout} constructor.
+	 * 
+	 * @param context The application {@link Context}.
+	 * @param attrs {@link AttributeSet} for the {@link View}
+	 * 
+	 * @see LinearLayout
+	 * @see Context
+	 * @see AttributeSet
+	 */
 	public MainLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
+	/**
+	 * Class constructor. Just calls the {@link LinearLayout} constructor.
+	 * 
+	 * @param context The application {@link Context}.
+	 * 
+	 * @see LinearLayout
+	 * @see Context
+	 */
 	public MainLayout(Context context) {
 		super(context);
 	}
 
+	/**
+	 * Return the left {@link View}, the one that contains the menu.
+	 * 
+	 * @return the menu {@link View}
+	 * @see View
+	 */
+	public View getMenuView(){
+		return menu;
+	}
+	
+	/*
+	 * Overridden method. Calculates the menu width when the view is loaded
+	 * and when it is resized. 
+	 */
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -51,6 +96,9 @@ public class MainLayout extends LinearLayout {
 		menuRightMargin = mainLayoutWidth * 40 / 100;
 	}
 	
+	/*
+	 * Overridden method. Called when the menu is opened. 
+	 */
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
@@ -66,6 +114,9 @@ public class MainLayout extends LinearLayout {
 		menu.setVisibility(View.GONE);
 	}
 
+	/*
+	 * Overridden method. Sets measures for children. 
+	 */
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		if (changed) {
@@ -82,6 +133,10 @@ public class MainLayout extends LinearLayout {
 
 	}
 
+	/**
+	 * Switch the state of the slider menu, but only if its fully shown or fully hidden.
+	 * It it is in the middle of a transition, it does nothing.
+	 */
 	public void toggleMenu() {
 		if (currentMenuState == MenuState.HIDING || currentMenuState == MenuState.SHOWING)
 			return;
@@ -103,14 +158,26 @@ public class MainLayout extends LinearLayout {
 		this.invalidate();
 	}
 	
+	/**
+	 * Subclass implementing {@link Runnable} to show menu animation
+	 *
+	 */
 	protected class MenuRunnable implements Runnable {
+		
+		/*
+		 * Run animation
+		 */
 		@Override
 		public void run() {
 			boolean isScrolling = menuScroller.computeScrollOffset();
 			adjustContentPosition(isScrolling);
 		}
 	}
-		
+	
+	/**
+	 * Adjust the layout position at each moment during the animation.
+	 * @param isScrolling Indicates if the menu is being scrolled.
+	 */
 	private void adjustContentPosition(boolean isScrolling) {
 		int scrollerXOffset = menuScroller.getCurrX();
 		
@@ -124,6 +191,11 @@ public class MainLayout extends LinearLayout {
 			this.onMenuSlidingComplete();
 	}
 	
+	/**
+	 * Changes the menu state to the next one. Is called from 
+	 * {@link adjustContentPosition(boolean isScrolling)} when a transition
+	 * is finiehed.
+	 */
 	private void onMenuSlidingComplete() {
 		switch (currentMenuState) {
 			case SHOWING:
@@ -138,7 +210,15 @@ public class MainLayout extends LinearLayout {
 		}
 	}
 	
+	/**
+	 * Subclass implementing {@link Interpolator} to fade in and out the
+	 * animation.
+	 */
 	protected class EaseInInterpolator implements Interpolator {
+		
+		/*
+		 * Overridden method. Returns the imterpolation factor 
+		 */
 		@Override
 		public float getInterpolation(float t) {
 			return (float) Math.pow(t - 1, 5) + 1;
@@ -146,10 +226,22 @@ public class MainLayout extends LinearLayout {
 	
 	}
 	
+	/**
+	 * Method to determine if the menu is being displayed.
+	 * @return true if the menu is being displayed, false otherwise.
+	 */
 	public boolean isMenuShown() {
 		return currentMenuState == MenuState.SHOWN;
 	}
 	
+	/**
+	 * Method that handles the different touch events in the menu.
+	 * @param v The {@link View} being touched (Must be the menu {@link View})
+	 * @param event The {@link MotionEvent} that just happened.
+	 * @return true if the {@link MotionEvent} is handled by this method, false otherwise.
+	 * @see {@link View}
+	 * @see {@link MotionEvent}
+	 */
 	public boolean onContentTouch(View v, MotionEvent event) {
 		if (currentMenuState == MenuState.HIDING || currentMenuState == MenuState.SHOWING)
 			return false;
@@ -160,7 +252,6 @@ public class MainLayout extends LinearLayout {
 			case MotionEvent.ACTION_DOWN:
 				prevX = curX;
 				return true;
-				//TODO: Return true only if the left of the screen is touched
 			
 			case MotionEvent.ACTION_MOVE:
 				if (!isDragging) {

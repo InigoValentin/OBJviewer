@@ -17,20 +17,30 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+/**
+ * An activity to pick a color. Is launched as a dialog, every time the user
+ * want to pick a color for the background, vertices, edges or faces.
+ * 
+ * Currently, consist only in three sliders (RGB) to compose a color and a preview.
+ * It does not include an alpha selector.
+ */
 public class ColorActivity extends Activity{
 	
 	//SeekBars
-	SeekBar sbR, sbG, sbB;
+	private SeekBar sbR, sbG, sbB;
 	
 	//Preview
-	ImageView ivPreview;
+	private ImageView ivPreview;
 	
 	//Buttons
-	Button btSelect, btDiscard;
+	private Button btSelect, btDiscard;
 	
 	//Color values
-	int r, g, b;
-		
+	private int r, g, b;
+	
+	/*
+	 * Overridden method. Called when the activity starts. See in line comments.
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//Remove title bar
@@ -52,7 +62,7 @@ public class ColorActivity extends Activity{
 		btSelect = (Button) findViewById(R.id.btColorSelect);
 		btDiscard = (Button) findViewById(R.id.btColorDiscard);
 		
-		//Assign listeners
+		//Assign "Select" button listener. Put selected color values as extra and finish.
 		btSelect.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -66,6 +76,7 @@ public class ColorActivity extends Activity{
 			}
 		});
 		
+		//Assign "Discard" button listener. Put invalid color values as extra and finish.
 		btDiscard.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -79,6 +90,7 @@ public class ColorActivity extends Activity{
 			}
 		});
 		
+		//OnSeekBarChangeListener for the red bar. Assigns the color value and calculates the preview.
 		sbR.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -93,6 +105,8 @@ public class ColorActivity extends Activity{
 			public void onStopTrackingTouch(SeekBar seekBar) {}
 			
 		});
+		
+		//OnSeekBarChangeListener for the green bar. Assigns the color value and calculates the preview.
 		sbG.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -107,6 +121,8 @@ public class ColorActivity extends Activity{
 			public void onStopTrackingTouch(SeekBar seekBar) {}
 			
 		});
+		
+		//OnSeekBarChangeListener for the blue bar. Assigns the color value and calculates the preview.
 		sbB.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -122,15 +138,15 @@ public class ColorActivity extends Activity{
 			
 		});
 		
-		//Set orientation
+		//Set layout orientation depending on screen orientation 
 		LinearLayout ll = (LinearLayout) findViewById(R.id.llColorActivity);
 	    int orientation = getResources().getConfiguration().orientation;
 	    if (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 	    	ll.setOrientation(LinearLayout.VERTICAL);
-	    else if (orientation == 2) //TODO: No constant
+	    else if (orientation == 2) //TODO: No constant with this value
 	    	ll.setOrientation(LinearLayout.HORIZONTAL);
 		
-		//Get extra and move seek bars
+		//Get extra data and set seek bars to the current color
 	    Intent intent = getIntent();
 	    sbR.setProgress(intent.getIntExtra("r", 0));
 	    sbG.setProgress(intent.getIntExtra("g", 0));
@@ -138,10 +154,13 @@ public class ColorActivity extends Activity{
 	    preview();
 	}
 	
-	public void preview(){
+	/**
+	 * Calculate the color depending on the seek bars state and colors a ImageView
+	 */
+	private void preview(){
 		int w = ivPreview.getWidth();
 		int h = ivPreview.getHeight();
-		//Failsafe for the first time, when ivPreview properties are not loaded
+		//Fail safe for the first time, when ivPreview properties are not loaded
 		if (w <= 0)
 			w = 80;
 		if (h <= 0)
@@ -155,21 +174,10 @@ public class ColorActivity extends Activity{
         canvas.drawRect(0, 0, w, h, paint);
         ivPreview.setImageBitmap(bmp);
 	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// Check which request we're responding to
-		if (requestCode == 1) {
-			// Make sure the request was successful
-			if (resultCode == RESULT_OK) {
-	            data.putExtra("r", r);
-	            data.putExtra("g", g);
-	            data.putExtra("b", b);
-	            setResult(resultCode);
-	        }
-	    }
-	}
-	
+
+	/*
+	 * Overridden method. Changes layout orientation when screen orientation does.
+	 */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 	    super.onConfigurationChanged(newConfig);
