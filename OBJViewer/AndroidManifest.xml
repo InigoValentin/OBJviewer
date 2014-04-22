@@ -42,6 +42,7 @@
             
         </activity>
         <activity android:name="com.seavenois.obj.ExplorerActivity"></activity>
+        <activity android:name="com.seavenois.obj.SettingsActivity"></activity>
     </application>
 
 </manifest>

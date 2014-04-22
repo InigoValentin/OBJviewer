@@ -40,4 +40,37 @@
     
     <string name="control_select">Select</string>
     <string name="control_discard">Discard</string>
+    
+    <string name="preferences_category_elements">Default elements to display</string>
+    <string name="preferences_item_draw_faces">Faces</string>
+    <string name="preferences_item_draw_faces_on">Show faces by default</string>
+    <string name="preferences_item_draw_faces_off">Don\'t show faces by default</string>
+    <string name="preferences_item_draw_edges">Edges</string>
+    <string name="preferences_item_draw_edges_on">Show edges by default</string>
+    <string name="preferences_item_draw_edges_off">Don\'t show edges by default</string>
+    <string name="preferences_item_draw_vertices">Vertices</string>
+    <string name="preferences_item_draw_vertices_on">Show vertices by default</string>
+    <string name="preferences_item_draw_vertices_off">Don\'t show vertices by default</string>
+    <string name="preferences_item_draw_background">Background</string>
+    <string name="preferences_item_draw_background_on">Show background by default</string>
+    <string name="preferences_item_draw_background_off">Don\'t show background by default</string>
+    <string name="preferences_category_colors">Default colors</string>
+    <string name="preferences_item_color_faces">Face color</string>
+    <string name="preferences_item_color_edges">Edge color</string>
+    <string name="preferences_item_color_vertices">Vertex color</string>
+    <string name="preferences_item_color_background">Background color</string>
+    <string name="preferences_category_sizes">Default sizes</string>
+    <string name="preferences_item_size_vertices">Vertex radius</string>
+    <string name="preferences_item_size_edges">Edge width</string>
+    <string name="preferences_category_alpha">Model transparency</string>
+    <string name="preferences_item_alpha">Transparency</string>
+    <string name="preferences_category_material">Material</string>
+    <string name="preferences_item_material">Use material by default</string>
+    <string name="preferences_item_material_on">Link material in mtl file</string>
+    <string name="preferences_item_material_off">Don\'t link material in mtl file</string>
+    <string name="preferences_category_scale">Scale model on load</string>
+    <string name="preferences_item_scale">Scale model</string>
+    <string name="preferences_item_scale_on">Scale model to fit window</string>
+    <string name="preferences_item_scale_off">Show model\'s original size</string>
+    
 </resources>

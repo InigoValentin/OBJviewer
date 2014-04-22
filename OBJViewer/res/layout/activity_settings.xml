@@ -1,0 +1,187 @@
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@color/background_menu"
+	    android:orientation="vertical" >
+	
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="3dp"
+	        android:background="@color/dark_gray"
+	        android:text="@string/preferences_category_elements"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+	    
+	    <CheckBox
+	        android:id="@+id/cbpDrawBackground"
+	        android:layout_width="fill_parent"
+	        android:layout_height="60dp"
+	        android:layout_gravity="center_vertical"
+	        android:checked="true"
+	        android:text="@string/preferences_item_draw_background" />
+	
+	    <CheckBox
+	        android:id="@+id/cbpDrawVertices"
+	        android:layout_width="fill_parent"
+	        android:layout_height="60dp"
+	        android:checked="true"
+	        android:text="@string/preferences_item_draw_vertices" />
+	
+	    <CheckBox
+	        android:id="@+id/cbpDrawEdges"
+	        android:layout_width="fill_parent"
+	        android:layout_height="60dp"
+	        android:checked="true"
+	        android:text="@string/preferences_item_draw_edges" />
+	
+	    <CheckBox
+	        android:id="@+id/cbpDrawFaces"
+	        android:layout_width="fill_parent"
+	        android:layout_height="60dp"
+	        android:checked="true"
+	        android:text="@string/preferences_item_draw_faces" />
+	
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="3dp"
+	        android:background="@color/dark_gray"
+	        android:text="@string/preferences_category_colors"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+	
+	    <TextView
+	        android:id="@+id/tvpBackgroundColor"
+	        android:layout_width="wrap_content"
+	        android:layout_height="60dp"
+	        android:gravity="center_vertical"
+	        android:text="@string/preferences_item_color_background" />
+	
+	    <TextView
+	        android:id="@+id/tvpVertexColor"
+	        android:layout_width="wrap_content"
+	        android:layout_height="60dp"
+	        android:gravity="center_vertical"
+	        android:text="@string/preferences_item_color_vertices" />
+	
+	    <TextView
+	        android:id="@+id/tvpEdgeColor"
+	        android:layout_width="wrap_content"
+	        android:layout_height="60dp"
+	        android:gravity="center_vertical"
+	        android:text="@string/preferences_item_color_edges" />
+	
+	    <TextView
+	        android:id="@+id/tvpFaceColor"
+	        android:layout_width="wrap_content"
+	        android:layout_height="60dp"
+	        android:gravity="center_vertical"
+	        android:text="@string/preferences_item_color_faces" />
+	
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="3dp"
+	        android:background="@color/dark_gray"
+	        android:text="@string/preferences_category_sizes"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+	
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="18dp"
+	            android:layout_gravity="bottom"
+	            android:text="@string/preferences_item_size_vertices"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	        <SeekBar
+	            android:id="@+id/sbpVertexSize"
+	            android:layout_width="match_parent"
+	            android:layout_height="42dp"
+	            android:layout_gravity="top"
+	            android:max="15" />
+	
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="18dp"
+	            android:layout_gravity="bottom"
+	            android:text="@string/preferences_item_size_edges"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	        <SeekBar
+	            android:id="@+id/sbpEdgeSize"
+	            android:layout_width="match_parent"
+	            android:layout_height="42dp"
+	            android:layout_gravity="top"
+	            android:max="8" />
+	
+	    </LinearLayout>
+	
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="3dp"
+	        android:background="@color/dark_gray"
+	        android:text="@string/preferences_category_alpha"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+	
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	        
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="18dp"
+	            android:layout_gravity="bottom"
+	            android:text="@string/preferences_item_alpha"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	        <SeekBar
+	            android:id="@+id/sbpAlpha"
+	            android:layout_width="match_parent"
+	            android:layout_height="42dp"
+	            android:layout_gravity="top"
+	            android:max="255"
+	            android:progress="120" />
+	
+	    </LinearLayout>
+	
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="3dp"
+	        android:background="@color/dark_gray"
+	        android:text="@string/preferences_category_material"
+	        android:textColor="@color/white"
+	        android:textStyle="bold" />
+	
+	    <CheckBox
+	        android:id="@+id/cbpUseMaterial"
+	        android:layout_width="fill_parent"
+	        android:layout_height="60dp"
+	        android:checked="true"
+	        android:text="@string/preferences_item_material" />
+	    
+	</LinearLayout>
+
+</ScrollView>

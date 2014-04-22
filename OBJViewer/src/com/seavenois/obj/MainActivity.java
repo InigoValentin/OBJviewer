@@ -207,11 +207,12 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		//OnClickListener for "Settings" button, TODO
+		//OnClickListener for "Settings" button, start SettingsActivity.
 		btSettings.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				//TODO
+				Intent i = new Intent(getBaseContext(), SettingsActivity.class);
+			    startActivity(i);
 			}
 		});
 		
@@ -513,16 +514,15 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Inits the sequence to load a model. If a filename is specified
+	 * Initializes the sequence to load a model. If a filename is specified
 	 * it will load that model, otherwise it will load the file that  
-	 * opened the app, and if it doesnt exists, it will load a default
+	 * opened the app, and if it doesn't exists, it will load a default
 	 * model. 
 	 *
 	 * @param  model The filename with full path to the file to be loaded.
 	 * If null, it will load a default model.
 	 */
 	public void loadModel(String model){
-		Log.d("OPENING A ", "A" + model);
 		
 		//No file selected or selected outside the app
 		if (model == null){
