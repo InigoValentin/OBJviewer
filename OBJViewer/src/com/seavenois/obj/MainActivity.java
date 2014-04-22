@@ -522,6 +522,9 @@ public class MainActivity extends Activity {
 	 * If null, it will load a default model.
 	 */
 	public void loadModel(String model){
+		Log.d("OPENING A ", "A" + model);
+		
+		//No file selected or selected outside the app
 		if (model == null){
 			if (getIntent().getAction().equals(Intent.ACTION_VIEW)){
 				//Load selected file
@@ -546,6 +549,23 @@ public class MainActivity extends Activity {
 				readMtl(null, true);
 				readFile(null, true);
 			}
+		}
+		
+		//File selected in the built in file manager
+		else{
+			//Load selected file
+			String obj, mtl;
+			Log.d("Opening model", model);
+			obj = model;
+			mtl = obj.substring(0, obj.length() - 3) + "mtl";
+			mtlFilePresent = fileExists(mtl);
+			if (mtlFilePresent == true){
+				readMtl(mtl, false);
+				useMaterial = true;
+			}
+			else
+				useMaterial = false;
+			readFile(obj, false);
 		}
 		draw();
 	}
@@ -1287,8 +1307,9 @@ public class MainActivity extends Activity {
 				if (resultCode == Activity.RESULT_OK) {
 					
 					//Read data
-					//TODO
-					
+					String filename = data.getStringExtra("file");
+					Log.d("MODEL", filename);
+					loadModel(filename);
 					//Load model
 					//TODO
 				}

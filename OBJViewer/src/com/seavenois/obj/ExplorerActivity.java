@@ -2,6 +2,7 @@ package com.seavenois.obj;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -173,6 +174,11 @@ public class ExplorerActivity extends Activity{
 				public void onClick(View v) {
 					//TODO
 					Log.d("Selected file", st);
+					Intent resultIntent = new Intent();
+					resultIntent.putExtra("ok", true);
+					resultIntent.putExtra("file", st);
+					setResult(Activity.RESULT_OK, resultIntent);
+					finish();
 				}
 			});
 			llContent.addView(row);
