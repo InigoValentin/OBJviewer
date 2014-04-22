@@ -101,7 +101,7 @@ public class SettingsActivity extends Activity{
 		readPreferences();
 		
 		//Set listeners
-		//OnCheckedChangeListener for "Vertices" check box, set boolean, show/hide some preferences and call draw().
+		//OnCheckedChangeListener for "Vertices" check box, set preference.
 		cbDrawVertices.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -110,7 +110,7 @@ public class SettingsActivity extends Activity{
 			}
 		});
 		
-		//OnCheckedChangeListener for "Edges" check box, set boolean, show/hide some preferences and call draw().
+		//OnCheckedChangeListener for "Edges" check box, set preference.
 		cbDrawEdges.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -119,7 +119,7 @@ public class SettingsActivity extends Activity{
 			}
 		});
 		
-		//OnCheckedChangeListener for "Faces" check box, set boolean, show/hide some preferences and call draw().
+		//OnCheckedChangeListener for "Faces" check box, set preference.
 		cbDrawFaces.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -128,7 +128,7 @@ public class SettingsActivity extends Activity{
 			}
 		});
 		
-		//OnCheckedChangeListener for "Background" check box, set boolean, show/hide some preferences and call draw().
+		//OnCheckedChangeListener for "Background" check box, set preference.
 		cbDrawBackground.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -137,11 +137,11 @@ public class SettingsActivity extends Activity{
 			}
 		});
 		
-		//OnCheckedChangeListener for "Use materials" check box (visible only if cbDrawFaces is checked), set boolean, show/hide some preferences and call draw().
+		//OnCheckedChangeListener for "Use materials" check box, set preference.
 		cbUseMaterial.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
-				editor.putBoolean("UseMaterial", isChecked);
+				editor.putBoolean("useMaterial", isChecked);
 				editor.commit();		
 			}
 		});
@@ -196,7 +196,7 @@ public class SettingsActivity extends Activity{
 			}
 		});
 		
-		//OnSeekBarChangeListenr for "Vertex size" SeekBar, change value and call draw().
+		//OnSeekBarChangeListenr for "Vertex size" SeekBar, change preference.
 		sbVertexSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -213,7 +213,7 @@ public class SettingsActivity extends Activity{
 			
 		});
 		
-		//OnSeekBarChangeListenr for "Edge size" SeekBar, change value and call draw().
+		//OnSeekBarChangeListenr for "Edge size" SeekBar, change preference.
 		sbEdgeSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -230,7 +230,7 @@ public class SettingsActivity extends Activity{
 			
 		});
 		
-		//OnSeekBarChangeListenr for "Transparency" SeekBar, change value and call draw().
+		//OnSeekBarChangeListenr for "Transparency" SeekBar, change preference.
 		sbAlpha.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -347,5 +347,158 @@ public class SettingsActivity extends Activity{
 		daux = new BitmapDrawable(getResources(), bmp);
 		daux.setBounds(0, 0, 50, 50);
 		tvBackgroundColor.setCompoundDrawables(daux ,null, null, null);
+	}
+	
+	/*
+	 * Overridden method. Receives results from other activities.
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		//Super
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		//Variables to store temporary data
+		int r, g, b;
+		Bitmap.Config conf;
+		Bitmap bmp;
+		Canvas canvas;
+		Paint paint;
+		
+		//Switch code
+		switch(requestCode) {
+		
+			//If its coming from ColorActivity to set the vertex color.
+			case (CODE_COLOR_VERTEX):
+				if (resultCode == Activity.RESULT_OK) {
+					
+					//Read data.
+					r = data.getIntExtra("r", -1);
+					g = data.getIntExtra("g", -1);
+					b = data.getIntExtra("b", -1);
+					
+					//Check if its valid.
+					if(r != -1 && g != -1 && b != -1){
+						
+						//Set color in preferences
+						editor.putInt("colorVerticesR", r);
+						editor.putInt("colorVerticesG", g);
+						editor.putInt("colorVerticesB", b);
+						editor.commit();
+						
+						//Set CompoundDrawable for color selector.
+						conf = Bitmap.Config.ARGB_8888;
+						bmp = Bitmap.createBitmap(50, 50, conf);
+						canvas = new Canvas(bmp);
+						paint = new Paint();
+				        paint.setStyle(Paint.Style.FILL);
+				        paint.setARGB(255, r, g, b);
+				        canvas.drawRect(0, 0, 50, 50, paint);
+						Drawable daux = new BitmapDrawable(getResources(), bmp);
+						daux.setBounds(0, 0, 50, 50);
+						tvVertexColor.setCompoundDrawables(daux ,null, null, null);
+					}
+				}
+				break;
+				
+			//If its coming from ColorActivity to set the edge color.
+			case (CODE_COLOR_EDGE):
+				if (resultCode == Activity.RESULT_OK) {
+					
+					//Read data.
+					r = data.getIntExtra("r", -1);
+					g = data.getIntExtra("g", -1);
+					b = data.getIntExtra("b", -1);
+					
+					//Check if its valid.
+					if(r != -1 && g != -1 && b != -1){
+						
+						//Set color in preferences
+						editor.putInt("colorEdgesR", r);
+						editor.putInt("colorEdgesG", g);
+						editor.putInt("colorEdgesB", b);
+						editor.commit();
+						
+						//Set CompoundDrawable for color selector.
+						conf = Bitmap.Config.ARGB_8888;
+						bmp = Bitmap.createBitmap(50, 50, conf);
+						canvas = new Canvas(bmp);
+						paint = new Paint();
+				        paint.setStyle(Paint.Style.FILL);
+				        paint.setARGB(255, r, g, b);
+				        canvas.drawRect(0, 0, 50, 50, paint);
+						Drawable daux = new BitmapDrawable(getResources(), bmp);
+						daux.setBounds(0, 0, 50, 50);
+						tvEdgeColor.setCompoundDrawables(daux ,null, null, null);
+					}
+				}
+				break;
+				
+			//If its coming from ColorActivity to set the face color.
+			case (CODE_COLOR_FACE):
+				if (resultCode == Activity.RESULT_OK) {
+					
+					//Read data.
+					r = data.getIntExtra("r", -1);
+					g = data.getIntExtra("g", -1);
+					b = data.getIntExtra("b", -1);
+					
+					//Check if its valid.
+					if(r != -1 && g != -1 && b != -1){
+						
+						//Set color in preferences
+						editor.putInt("colorFacesR", r);
+						editor.putInt("colorFacesG", g);
+						editor.putInt("colorFacesB", b);
+						editor.commit();
+						
+						//Set CompoundDrawable for color selector.
+						conf = Bitmap.Config.ARGB_8888;
+						bmp = Bitmap.createBitmap(50, 50, conf);
+						canvas = new Canvas(bmp);
+						paint = new Paint();
+				        paint.setStyle(Paint.Style.FILL);
+				        paint.setARGB(255, r, g, b);
+				        canvas.drawRect(0, 0, 50, 50, paint);
+						Drawable daux = new BitmapDrawable(getResources(), bmp);
+						daux.setBounds(0, 0, 50, 50);
+						tvFaceColor.setCompoundDrawables(daux ,null, null, null);
+					}
+				}
+				break;
+				
+			//If its coming from ColorActivity to set the face color.
+			case (CODE_COLOR_BACKGROUND):
+				if (resultCode == Activity.RESULT_OK) {
+					
+					//Read data
+					r = data.getIntExtra("r", -1);
+					g = data.getIntExtra("g", -1);
+					b = data.getIntExtra("b", -1);
+					
+					//Check if its valid.
+					if(r != -1 && g != -1 && b != -1){
+						
+						//Set color in preferences
+						editor.putInt("colorBackgroundR", r);
+						editor.putInt("colorBackgroundG", g);
+						editor.putInt("colorBackgroundB", b);
+						editor.commit();
+						
+						//Set CompoundDrawable for color selector.
+						conf = Bitmap.Config.ARGB_8888;
+						bmp = Bitmap.createBitmap(50, 50, conf);
+						canvas = new Canvas(bmp);
+						paint = new Paint();
+				        paint.setStyle(Paint.Style.FILL);
+				        paint.setARGB(255, r, g, b);
+				        canvas.drawRect(0, 0, 50, 50, paint);
+						Drawable daux = new BitmapDrawable(getResources(), bmp);
+						daux.setBounds(0, 0, 50, 50);
+						tvBackgroundColor.setCompoundDrawables(daux ,null, null, null);
+					}
+				}
+				break;
+		}
 	}
 }

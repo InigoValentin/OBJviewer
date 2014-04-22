@@ -195,8 +195,8 @@ public class MainActivity extends Activity {
 		drawBackground = prefs.getBoolean("drawBackground", true);
 		useMaterial = prefs.getBoolean("useMaterial", true);
 		colorVertex = new Color(prefs.getInt("colorVerticesR", 100), prefs.getInt("colorVerticesG", 0), prefs.getInt("colorVerticesB", 0));
-		colorEdge = new Color(prefs.getInt("colorEdgeR", 0), prefs.getInt("colorEdgeG", 0), prefs.getInt("colorEdgeB", 0));
-		colorFace = new Color(prefs.getInt("colorFaceR", 0), prefs.getInt("colorFaceG", 0), prefs.getInt("colorFaceB", 255), alpha);
+		colorEdge = new Color(prefs.getInt("colorEdgesR", 0), prefs.getInt("colorEdgesG", 0), prefs.getInt("colorEdgesB", 0));
+		colorFace = new Color(prefs.getInt("colorFacesR", 0), prefs.getInt("colorFacesG", 0), prefs.getInt("colorFacesB", 255), alpha);
 		colorBackground = new Color(prefs.getInt("colorBackgroundR", 50), prefs.getInt("colorBackgroundG", 50), prefs.getInt("colorBackgroundB", 50));
 		
 		//Change UI elements depending on preferences
@@ -566,19 +566,14 @@ public class MainActivity extends Activity {
 				obj = getIntent().getData().getEncodedPath();
 				mtl = obj.substring(0, obj.length() - 3) + "mtl";
 				mtlFilePresent = fileExists(mtl);
-				if (mtlFilePresent == true){
+				if (mtlFilePresent == true)
 					readMtl(mtl, false);
-					useMaterial = true;
-				}
-				else
-					useMaterial = false;
 				readFile(obj, false);
 			}
 			else{
 				//Load default file
 				Log.d("Opening model", "DEFAULT");
 				mtlFilePresent = true;
-				useMaterial = true;
 				readMtl(null, true);
 				readFile(null, true);
 			}
