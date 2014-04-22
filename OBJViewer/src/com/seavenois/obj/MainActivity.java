@@ -15,8 +15,10 @@ import java.util.Locale;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -112,6 +114,9 @@ public class MainActivity extends Activity {
 	private Face[] face = new Face[MAX_FACES];					//Face array, with all the faces in the .obj file.
 	private Material[] material = new Material[MAX_MATERIALS];	//Material array, with all the materials in the .mtl file.
 	
+	//The preference manager
+	SharedPreferences prefs;
+	
 	//Variables containing the total amount of elements
 	private int totalVerts, totalFaces, totalMaterials;
 	
@@ -153,19 +158,6 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 				
-		//Useful variables to set the CompoudDrawable for some TextView.
-		Drawable daux;	
-		Bitmap.Config conf;
-		Bitmap bmp;
-		Canvas canvas;
-		Paint paint;
-		
-		//Initialize colors with default values.
-		colorVertex = new Color(100, 0, 0, 255);
-		colorEdge = new Color(0, 0, 0, 255);
-		colorFace = new Color(0, 0, 255, alpha);
-		colorBackground = new Color(50, 50, 50, 255);
-		
 		//Assign ui elements.
 		ivCanvas = (ImageView) findViewById(R.id.ivCanvas);
 		mLayout = (MainLayout) findViewById(R.id.mainLayout);
@@ -189,7 +181,48 @@ public class MainActivity extends Activity {
 		sbVertexSize = (SeekBar) findViewById(R.id.sbVertexSize);
 		sbEdgeSize = (SeekBar) findViewById(R.id.sbEdgeSize);
 		sbAlpha = (SeekBar) findViewById(R.id.sbAlpha);
-				
+		
+		//Preference manager
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		//Assign preferences
+		vertexWidth = prefs.getInt("sizeVertices", 3);			//Radius of the circle representing each vertex.
+		edgeWidth = prefs.getInt("sizeEdges", 2);				//Width of the lines representing the edges.
+		alpha = prefs.getInt("alpha", 120);
+		drawVertices = prefs.getBoolean("drawVertices", true);
+		drawEdges = prefs.getBoolean("drawEdges", true);
+		drawFaces = prefs.getBoolean("drawFAces", true);
+		drawBackground = prefs.getBoolean("drawBackground", true);
+		useMaterial = prefs.getBoolean("useMaterial", true);
+		colorVertex = new Color(prefs.getInt("colorVerticesR", 100), prefs.getInt("colorVerticesG", 0), prefs.getInt("colorVerticesB", 0));
+		colorEdge = new Color(prefs.getInt("colorEdgeR", 0), prefs.getInt("colorEdgeG", 0), prefs.getInt("colorEdgeB", 0));
+		colorFace = new Color(prefs.getInt("colorFaceR", 0), prefs.getInt("colorFaceG", 0), prefs.getInt("colorFaceB", 255), alpha);
+		colorBackground = new Color(prefs.getInt("colorBackgroundR", 50), prefs.getInt("colorBackgroundG", 50), prefs.getInt("colorBackgroundB", 50));
+		
+		//Change UI elements depending on preferences
+		cbDrawVertices.setChecked(drawVertices);
+		cbDrawEdges.setChecked(drawEdges);
+		cbDrawFaces.setChecked(drawFaces);
+		cbDrawBackground.setChecked(drawBackground);
+		cbUseMaterial.setChecked(useMaterial);
+		if (drawVertices == false)
+			llVertexPreferences.setVisibility(View.GONE);
+		if (drawEdges == false)
+			llEdgePreferences.setVisibility(View.GONE);
+		if (drawFaces == false)
+			llFacePreferences.setVisibility(View.GONE);
+		if (drawBackground == false)
+			llBackgroundPreferences.setVisibility(View.GONE);
+		if (useMaterial)
+			tvFaceColor.setVisibility(View.GONE);
+		
+		//Useful variables to set the CompoudDrawable for some TextView.
+		Drawable daux;	
+		Bitmap.Config conf;
+		Bitmap bmp;
+		Canvas canvas;
+		Paint paint;
+		
 		//OnClickListener for "Load Model" button, launch ExplorerActivity.
 		btLoadModel.setOnClickListener(new OnClickListener(){
 			@Override

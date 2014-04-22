@@ -1,7 +1,9 @@
 package com.seavenois.obj;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,16 +11,49 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.view.Window;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /**
  * Class extending {@link Activity} that shows and allow to change
  * app options. Changed are saved.
  */
 public class SettingsActivity extends Activity{
+	
+	/**
+	 * Request code to pass to activity {@link ColorActivity} to be retrieved
+	 * by onActivityResult(int requestCode, int resultCode, Intent data). 
+	 * Indicates that the result is intended to be set as vertex color.
+	 */
+	public static final int CODE_COLOR_VERTEX = 1803;
+	
+	/**
+	 * Request code to pass to activity {@link ColorActivity} to be retrieved
+	 * by onActivityResult(int requestCode, int resultCode, Intent data). 
+	 * Indicates that the result is intended to be set as edge color.
+	 */
+	public static final int CODE_COLOR_EDGE = 1804;
+	
+	/**
+	 * Request code to pass to activity {@link ColorActivity} to be retrieved
+	 * by onActivityResult(int requestCode, int resultCode, Intent data). 
+	 * Indicates that the result is intended to be set as face color.
+	 */
+	public static final int CODE_COLOR_FACE = 1805;
+	
+	/**
+	 * Request code to pass to activity {@link ColorActivity} to be retrieved
+	 * by onActivityResult(int requestCode, int resultCode, Intent data). 
+	 * Indicates that the result is intended to be set as background color.
+	 */
+	public static final int CODE_COLOR_BACKGROUND = 1806;
 
 	//UI elements
 	private CheckBox cbDrawVertices, cbDrawEdges, cbDrawFaces, cbDrawBackground, cbUseMaterial;
@@ -27,6 +62,7 @@ public class SettingsActivity extends Activity{
 	
 	//Shared preferences
 	SharedPreferences prefs;
+	Editor editor;
 	boolean pDrawVertices, pDrawEdges, pDrawFaces, pDrawBackground, pUseMaterial;
 	int pColorVerticesR, pColorVerticesG, pColorVerticesB;
 	int pColorEdgesR, pColorEdgesG, pColorEdgesB;
@@ -64,6 +100,153 @@ public class SettingsActivity extends Activity{
 		
 		readPreferences();
 		
+		//Set listeners
+		//OnCheckedChangeListener for "Vertices" check box, set boolean, show/hide some preferences and call draw().
+		cbDrawVertices.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				editor.putBoolean("drawVertices", isChecked);
+				editor.commit();
+			}
+		});
+		
+		//OnCheckedChangeListener for "Edges" check box, set boolean, show/hide some preferences and call draw().
+		cbDrawEdges.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				editor.putBoolean("drawEdges", isChecked);
+				editor.commit();	
+			}
+		});
+		
+		//OnCheckedChangeListener for "Faces" check box, set boolean, show/hide some preferences and call draw().
+		cbDrawFaces.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				editor.putBoolean("drawFaces", isChecked);
+				editor.commit();		
+			}
+		});
+		
+		//OnCheckedChangeListener for "Background" check box, set boolean, show/hide some preferences and call draw().
+		cbDrawBackground.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				editor.putBoolean("drawBackground", isChecked);
+				editor.commit();		
+			}
+		});
+		
+		//OnCheckedChangeListener for "Use materials" check box (visible only if cbDrawFaces is checked), set boolean, show/hide some preferences and call draw().
+		cbUseMaterial.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				editor.putBoolean("UseMaterial", isChecked);
+				editor.commit();		
+			}
+		});
+		
+		
+		
+		//OnClickListener for "Vertex color" TextView, launch ColorActivity.
+		tvVertexColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", pColorVerticesR);
+				i.putExtra("g", pColorVerticesG);
+				i.putExtra("b", pColorVerticesB);
+				startActivityForResult(i, CODE_COLOR_VERTEX);
+			}
+		});
+		
+		//OnClickListener for "Edge color" TextView, launch ColorActivity.
+		tvEdgeColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", pColorEdgesR);
+				i.putExtra("g", pColorEdgesG);
+				i.putExtra("b", pColorEdgesB);
+				startActivityForResult(i, CODE_COLOR_EDGE);
+			}
+		});
+		
+		//OnClickListener for "Face color" TextView, launch ColorActivity.
+		tvFaceColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", pColorFacesR);
+				i.putExtra("g", pColorFacesG);
+				i.putExtra("b", pColorFacesB);
+				startActivityForResult(i, CODE_COLOR_FACE);
+			}
+		});
+		
+		//OnClickListener for "Background color" TextView, launch ColorActivity.
+		tvBackgroundColor.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent i = new Intent(getBaseContext(), ColorActivity.class);
+				i.putExtra("r", pColorBackgroundR);
+				i.putExtra("g", pColorBackgroundG);
+				i.putExtra("b", pColorBackgroundB);
+				startActivityForResult(i, CODE_COLOR_BACKGROUND);
+			}
+		});
+		
+		//OnSeekBarChangeListenr for "Vertex size" SeekBar, change value and call draw().
+		sbVertexSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				editor.putInt("sizeVertices", progress);
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				editor.commit();
+			}
+			
+		});
+		
+		//OnSeekBarChangeListenr for "Edge size" SeekBar, change value and call draw().
+		sbEdgeSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				editor.putInt("sizeEdges", progress);
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				editor.commit();	
+			}
+			
+		});
+		
+		//OnSeekBarChangeListenr for "Transparency" SeekBar, change value and call draw().
+		sbAlpha.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				editor.putInt("alpha", progress);
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				editor.commit();
+			}
+			
+		});
+		
     }
 	
 	/**
@@ -81,6 +264,7 @@ public class SettingsActivity extends Activity{
 		
 		//Preference manager
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		editor = prefs.edit();
 		
 		//Get all preferences
 		pDrawVertices = prefs.getBoolean("drawVertices", true);
