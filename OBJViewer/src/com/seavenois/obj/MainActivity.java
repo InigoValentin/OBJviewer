@@ -205,6 +205,9 @@ public class MainActivity extends Activity {
 		cbDrawFaces.setChecked(drawFaces);
 		cbDrawBackground.setChecked(drawBackground);
 		cbUseMaterial.setChecked(useMaterial);
+		sbAlpha.setProgress(alpha);
+		sbVertexSize.setProgress(vertexWidth);
+		sbEdgeSize.setProgress(edgeWidth);
 		if (drawVertices == false)
 			llVertexPreferences.setVisibility(View.GONE);
 		if (drawEdges == false)
@@ -249,11 +252,12 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		//OnClickListener for "About" button, TODO
+		//OnClickListener for "About" button, start AboutActivity.
 		btAbout.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				//TODO
+				Intent i = new Intent(getBaseContext(), AboutActivity.class);
+			    startActivity(i);
 			}
 		});
 		
@@ -540,7 +544,7 @@ public class MainActivity extends Activity {
 		});
 		
 		//Load the default model
-		loadModel(null);
+		loadModel(null, R.raw.rainbowobj, R.raw.rainbowmtl);
 		
 		//Initiate background search for files
 		reload();
@@ -553,9 +557,15 @@ public class MainActivity extends Activity {
 	 * model. 
 	 *
 	 * @param  model The filename with full path to the file to be loaded.
-	 * If null, it will load a default model.
+	 * If null, it will load the model in the file pointed by the second parameter.
+	 * 
+	 * @param  objResource The resource of the file within the app to load the model from.
+	 * If the parameter 1 is not null, it will be ignored.
+	 * 
+	 * * @param  mtlResource The resource of the file within the app to load the model from.
+	 * If the parameter 1 is not null, it will be ignored.
 	 */
-	public void loadModel(String model){
+	public void loadModel(String model, int objResource, int mtlResource){
 		
 		//No file selected or selected outside the app
 		if (model == null){
@@ -567,15 +577,15 @@ public class MainActivity extends Activity {
 				mtl = obj.substring(0, obj.length() - 3) + "mtl";
 				mtlFilePresent = fileExists(mtl);
 				if (mtlFilePresent == true)
-					readMtl(mtl, false);
-				readFile(obj, false);
+					readMtl(mtl, 0);
+				readFile(obj, 0);
 			}
 			else{
 				//Load default file
-				Log.d("Opening model", "DEFAULT");
+				Log.d("Opening example model", "#" + objResource);
 				mtlFilePresent = true;
-				readMtl(null, true);
-				readFile(null, true);
+				readMtl(null, mtlResource);
+				readFile(null, objResource);
 			}
 		}
 		
@@ -588,12 +598,12 @@ public class MainActivity extends Activity {
 			mtl = obj.substring(0, obj.length() - 3) + "mtl";
 			mtlFilePresent = fileExists(mtl);
 			if (mtlFilePresent == true){
-				readMtl(mtl, false);
+				readMtl(mtl, 0);
 				useMaterial = true;
 			}
 			else
 				useMaterial = false;
-			readFile(obj, false);
+			readFile(obj, 0);
 		}
 		draw();
 	}
@@ -905,10 +915,10 @@ public class MainActivity extends Activity {
 	 * 
 	 * @param  filename Filename, with its full path, of the file.
 	 * 
-	 * @param resource Must be true if filename contains the path to a file embedded in the package
-	 * (under the res/ folder).
+	 * @param resource The resource of the file within the app to load the model from.
+	 * If the parameter 1 is not null, it will be ignored.
 	 */
-	private void readMtl(String filename, boolean resource){
+	private void readMtl(String filename, int resource){
 		
 		//Variables to store temporary data.
 		String str;
@@ -932,9 +942,9 @@ public class MainActivity extends Activity {
 		try{
 			
 			//If the model is not a file, but a resource contained in the app. Load file content.
-			if (resource){
+			if (filename == null){
 				//TODO: Don't hard code the name.
-				is= getBaseContext().getResources().openRawResource(R.raw.cubemtl);
+				is= getBaseContext().getResources().openRawResource(resource);
 				input =  new BufferedReader(new InputStreamReader(is), 1024*8);
 			}
 			
@@ -999,16 +1009,16 @@ public class MainActivity extends Activity {
 	 * 
 	 * @param  filename Filename, with its full path, of the file.
 	 * 
-	 * @param resource Must be true if filename contains the path to a file embedded in the package
-	 * (under the res/ folder).
+	 * @param resource The resource of the file within the app to load the model from.
+	 * If the parameter 1 is not null, it will be ignored.
 	 */
-	private void readFile(String filename, boolean resource){
+	private void readFile(String filename, int resource){
 		
 		//Variables to store temporary data.
 		String str;
 		float x, y, z, dist;
 		
-		//Variable that will store the farthest vertex from the center, to calculate the best scale (TODO)
+		//Variable that will store the farthest vertex from the center, to calculate the best scale.
 		float max = 0;
 		
 		//Variable that will count the vertices and faces.
@@ -1034,8 +1044,8 @@ public class MainActivity extends Activity {
 		try{
 			
 			//If the model is not a file, but a resource contained in the app. Load file content.
-			if (resource){
-				is= getBaseContext().getResources().openRawResource(R.raw.cubeobj);
+			if (filename == null){
+				is= getBaseContext().getResources().openRawResource(resource);
 				input =  new BufferedReader(new InputStreamReader(is), 1024*8);
 			}
 			
@@ -1124,6 +1134,9 @@ public class MainActivity extends Activity {
 				//Assign counters
 		        totalVerts = v;
 		        totalFaces = f;
+		        
+		        //Calculate scale
+		        calculateScale(max);
 			}
 			finally {
 				input.close();
@@ -1135,6 +1148,36 @@ public class MainActivity extends Activity {
 		catch (IOException ex){
 			Log.e("ERROR", "Error reading file " + filename + " " + ex);
 		}
+	}
+	
+	/**
+	 * Method that sets the scale so the biggest dimension of the object fits in
+	 * the smallest dimension of the canvas.
+	 * 
+	 * @param max	The distance from the center to the farthest vertex.
+	 */
+	private void calculateScale(float max){
+		
+		float min;
+		
+		//Get canvas dimensions
+		int w = ivCanvas.getWidth();
+		int h = ivCanvas.getWidth();
+		
+		//TODO: The first time wont work, so I'm assuming 480 as 
+		//minimum value. (Resolution of a Nexus One)
+		if (w <= 0)
+			w = 480;
+		if (h <= 0)
+			h = 480;
+		
+		//Get the smaller dimension
+		if (w < h)
+			min = w;
+		else
+			min = h;
+		scale = (float) ((0.95 * min) / (2 * max));
+		Log.d("Set scale", String.valueOf(scale));
 	}
 	
 	
@@ -1336,10 +1379,15 @@ public class MainActivity extends Activity {
 					
 					//Read data
 					String filename = data.getStringExtra("file");
-					Log.d("MODEL", filename);
-					loadModel(filename);
-					//Load model
-					//TODO
+					if (filename.equals("none") == false)
+						loadModel(filename, 0, 0);
+					else{
+						int resource = data.getIntExtra("resource", -1);
+						int mtl = data.getIntExtra("mtlResource", -1);
+						Log.d("RES", "#" + resource);
+						if (resource != -1)
+							loadModel(null, resource, mtl);
+					}
 				}
 				break;
 		}

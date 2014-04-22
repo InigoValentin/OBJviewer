@@ -121,6 +121,22 @@ public class ExplorerActivity extends Activity{
 			cur.moveToNext();
     	}
 		
+		//Add the examples folder
+		row = getLayoutInflater().inflate(R.layout.row_directory, null);
+		tvName = (TextView) row.findViewById(R.id.tvFolderName);
+		tvPath = (TextView) row.findViewById(R.id.tvFolderPath);
+		tvCount = (TextView) row.findViewById(R.id.tvFolderCount);
+		tvCount.setText("7" + getString(R.string.explorer_file_plural));
+		tvName.setText(R.string.explorer_examples_folder);
+		tvPath.setText(getString(R.string.explorer_examples_desciption));
+		row.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				openExamplesFolder();
+			}
+		});
+		llContent.addView(row);
+		
 		cur.close();
 		db.close();
 	}
@@ -187,6 +203,55 @@ public class ExplorerActivity extends Activity{
 		
 		cur.close();
 		db.close();
+	}
+	
+	/**
+	 * Open an examples folder, that is not really a folder, but a collection 
+	 * of models included with the app, so everything is static.
+	 */
+	public void openExamplesFolder(){
+		//Set variable
+		rootView = false;
+		
+		//Set title
+		tvHeader.setText(getString(R.string.explorer_examples_folder) + "/");
+		
+		//Show button
+		btBack.setVisibility(View.VISIBLE);
+		
+		//Clear layout
+		llContent.removeAllViews();
+		
+		//Array with examples
+		final int[] example = {R.raw.rainbowobj, R.raw.cubeobj, R.raw.sphereobj, R.raw.starobj, R.raw.monkeyobj, R.raw.boltobj, R.raw.multipleobj};
+		final int[] exampleMtl = {R.raw.rainbowmtl, R.raw.cubemtl, R.raw.spheremtl, R.raw.starmtl, R.raw.monkeymtl, R.raw.boltmtl, R.raw.multiplemtl};
+		final int[] exampleName = {R.string.example_0, R.string.example_1, R.string.example_2, R.string.example_3, R.string.example_4, R.string.example_5, R.string.example_6};
+		
+		View row = null;
+		TextView tvName, tvMtl;
+		for (int i = 0; i < 7; i ++){
+			row = getLayoutInflater().inflate(R.layout.row_file, null);
+			tvName = (TextView) row.findViewById(R.id.tvFileName);
+			tvMtl = (TextView) row.findViewById(R.id.tvFileMtl);
+			tvName.setText(exampleName[i]);
+			tvMtl.setVisibility(View.VISIBLE);
+			final int j = i;
+			row.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					//TODO
+					Log.d("Selected example", getString(exampleName[j]));
+					Intent resultIntent = new Intent();
+					resultIntent.putExtra("ok", true);
+					resultIntent.putExtra("file", "none");
+					resultIntent.putExtra("resource", example[j]);
+					resultIntent.putExtra("mtlResource", exampleMtl[j]);
+					setResult(Activity.RESULT_OK, resultIntent);
+					finish();
+				}
+			});
+			llContent.addView(row);
+		}
 	}
 	
 	/**

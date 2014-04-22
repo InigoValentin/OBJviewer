@@ -8,10 +8,13 @@ ObjViewer
 
 * Object rotation.
 * Zoom in and out.
-* Choose to draw (or not) vertizes, edges or faces.
+* Choose to draw (or not) vertices, edges or faces.
 * Use mtl files for material color.
-* Change colors of background, vertizes, edges, and faces during runtime.
+* Change colors of background, vertices, edges, and faces during runtime.
 * Change face transparency during runtime, so hidden elements are visible.
+* Persistent preferences.
+* Load models from the built in file manager or from your favourite one.
+* 7 examples included with the app.
 
 
 ### Compatibility ###
