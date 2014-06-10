@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OBJ viewer</string>
+    <string name="action_settings">Preferencias</string>
+    
+    <string name="about_url">"file:///android_asset/about-es.html"</string>
+    
+    <string name="tip">Desliza la pantalla de izquierda a derecha para abrir el menu</string>
+
+    <string name="menu_open">Cargar modelo</string>
+    <string name="menu_snap">Captura</string>
+    <string name="menu_settings">Preferencias</string>
+    <string name="menu_about">Acerca de</string>
+    <string name="menu_draw_vertices">Vertices</string>
+    <string name="menu_draw_edges">Aristas</string>
+    <string name="menu_draw_faces">Caras</string>
+    <string name="menu_draw_background">Fondo</string>
+    <string name="menu_color_vertices">Color de los vertices</string>
+    <string name="menu_color_edges">Color de las aristas</string>
+    <string name="menu_color_faces">Color de las caras</string>
+    <string name="menu_color_background">Color de fondo</string>
+    <string name="menu_alpha">Transparencia</string>
+    <string name="menu_size_vertices">Radio de los vertices</string>
+    <string name="menu_size_edges">Grosor de las caras</string>
+    <string name="menu_use_material">Usar material</string>
+    
+    <string name="explorer_header">Archivos obj</string>
+    <string name="explorer_reload">Actualizar</string>
+    <string name="explorer_back">Atras</string>
+    <string name="explorer_file_singular">archivo</string>
+    <string name="explorer_file_plural">archivos</string>
+    <string name="explorer_mtl">.mtl</string>
+    <string name="explorer_details_mtl">%1$s bytes, %2$s vertices, %3$s caras, %4$s materiales.</string>
+    <string name="explorer_details_nomtl">%1$s bytes, %2$s vertices, %3$s caras.</string>
+    <string name="explorer_examples_folder">Ejemplos</string>
+    <string name="explorer_examples_desciption">Ejemplos contenidos en la aplicacion</string>
+    
+    <string name="example_0">ObjViewer Logo</string>
+    <string name="example_1">Cubo</string>
+    <string name="example_2">Esfera</string>
+    <string name="example_3">Estrella</string>
+    <string name="example_4">Suzzane</string>
+    <string name="example_5">Tornillo</string>
+    <string name="example_6">Multiples objetos</string>
+    
+    <string name="toast_file_saved">Archivo guardado: </string>
+    <string name="toast_file_error">Imposible guardar imagen</string>
+    
+    <string name="color_red">Rojo</string>
+    <string name="color_green">Verde</string>
+    <string name="color_blue">Azul</string>
+    
+    <string name="control_select">Aplicar</string>
+    <string name="control_discard">Cancelar</string>
+    
+    <string name="preferences_category_elements">Elementos a mostrar</string>
+    <string name="preferences_item_draw_faces">Caras</string>
+    <string name="preferences_item_draw_faces_on">Mostrar caras por defecto</string>
+    <string name="preferences_item_draw_faces_off">No mostrar caras por defecto</string>
+    <string name="preferences_item_draw_edges">Aristas</string>
+    <string name="preferences_item_draw_edges_on">Mostrar aristas por defecto</string>
+    <string name="preferences_item_draw_edges_off">No mostrar aristas por defecto</string>
+    <string name="preferences_item_draw_vertices">Vertices</string>
+    <string name="preferences_item_draw_vertices_on">Mostrar vertices por defecto</string>
+    <string name="preferences_item_draw_vertices_off">No mostrar vertices por defecto</string>
+    <string name="preferences_item_draw_background">Fondo</string>
+    <string name="preferences_item_draw_background_on">Mostrar vertices por defecto</string>
+    <string name="preferences_item_draw_background_off">No mostrar vertices por defecto</string>
+    <string name="preferences_category_colors">Colores por defecto</string>
+    <string name="preferences_item_color_faces">Color de las caras</string>
+    <string name="preferences_item_color_edges">Color de las aristas</string>
+    <string name="preferences_item_color_vertices">Color de los vertices</string>
+    <string name="preferences_item_color_background">Color de fondo</string>
+    <string name="preferences_category_sizes">Dimensiones por defecto</string>
+    <string name="preferences_item_size_vertices">Radio de los vertices</string>
+    <string name="preferences_item_size_edges">Grosor de las aristas</string>
+    <string name="preferences_category_alpha">Transparencia del modelo</string>
+    <string name="preferences_item_alpha">Transparencia</string>
+    <string name="preferences_category_material">Material</string>
+    <string name="preferences_item_material">Usar materiales por defecto</string>
+    <string name="preferences_item_material_on">Leer materiales de archivos .mtl</string>
+    <string name="preferences_item_material_off">No leer materiales de archivos .mtl</string>
+    <string name="preferences_category_scale">Ajustar modelo al cargar</string>
+    <string name="preferences_item_scale">Ajustar modelo</string>
+    <string name="preferences_item_scale_on">Ajustar al tamano de la pantalla</string>
+    <string name="preferences_item_scale_off">Mantener el tamano original</string>
+    
+</resources>

@@ -16,7 +16,7 @@ public class AboutActivity extends Activity{
             webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             
             //Load file
-            webview.loadUrl("file:///android_asset/about.html");
+            webview.loadUrl(getString(R.string.about_url));
 
     }
 }

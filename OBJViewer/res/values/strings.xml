@@ -3,7 +3,10 @@
 
     <string name="app_name">OBJ viewer</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    
+    <string name="about_url">"file:///android_asset/about.html"</string>
+    
+    <string name="tip">Swipe from the left of the screen to see the menu</string>
 
     <string name="menu_open">Open file</string>
     <string name="menu_snap">Snapshot</string>
@@ -17,7 +20,7 @@
     <string name="menu_color_edges">Edge color</string>
     <string name="menu_color_faces">Face color</string>
     <string name="menu_color_background">Background color</string>
-    <string name="menu_alpha">Face transparency</string>
+    <string name="menu_alpha">Face opacity</string>
     <string name="menu_size_vertices">Vertex size</string>
     <string name="menu_size_edges">Edges size</string>
     <string name="menu_use_material">Use material</string>
@@ -25,8 +28,8 @@
     <string name="explorer_header">obj files</string>
     <string name="explorer_reload">Reload</string>
     <string name="explorer_back">Back</string>
-    <string name="explorer_file_singular"> file</string>
-    <string name="explorer_file_plural"> files</string>
+    <string name="explorer_file_singular">file</string>
+    <string name="explorer_file_plural">files</string>
     <string name="explorer_mtl">.mtl</string>
     <string name="explorer_details_mtl">%1$s bytes, %2$s vertices, %3$s faces, %4$s materials.</string>
     <string name="explorer_details_nomtl">%1$s bytes, %2$s vertices, %3$s faces.</string>
@@ -73,7 +76,7 @@
     <string name="preferences_item_size_vertices">Vertex radius</string>
     <string name="preferences_item_size_edges">Edge width</string>
     <string name="preferences_category_alpha">Model transparency</string>
-    <string name="preferences_item_alpha">Transparency</string>
+    <string name="preferences_item_alpha">Opacity</string>
     <string name="preferences_category_material">Material</string>
     <string name="preferences_item_material">Use material by default</string>
     <string name="preferences_item_material_on">Link material in mtl file</string>

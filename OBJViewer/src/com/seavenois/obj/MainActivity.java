@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -548,6 +549,17 @@ public class MainActivity extends Activity {
 		
 		//Initiate background search for files
 		reload();
+		
+		//Show Toast if this is the first run
+		Editor editor;
+		if (prefs.getBoolean("tip", true)){
+			editor = prefs.edit();
+			Toast toast = Toast.makeText(this, getString(R.string.tip), Toast.LENGTH_LONG);
+			toast.show();
+			editor.putBoolean("tip", false);
+			editor.commit();
+		}
+			
 	}
 
 	/**
@@ -599,10 +611,16 @@ public class MainActivity extends Activity {
 			mtlFilePresent = fileExists(mtl);
 			if (mtlFilePresent == true){
 				readMtl(mtl, 0);
-				useMaterial = true;
+				useMaterial = prefs.getBoolean("useMaterial", true);
+				cbUseMaterial.setVisibility(View.VISIBLE);
+				if (useMaterial)
+					tvFaceColor.setVisibility(View.GONE);
 			}
-			else
+			else{
 				useMaterial = false;
+				tvFaceColor.setVisibility(View.VISIBLE);
+				cbUseMaterial.setVisibility(View.GONE);
+			}
 			readFile(obj, 0);
 		}
 		draw();
@@ -939,11 +957,12 @@ public class MainActivity extends Activity {
 		//The file.
 		File f;
 		
+		//Clear the array
+		material = new Material[MAX_MATERIALS];
 		try{
 			
 			//If the model is not a file, but a resource contained in the app. Load file content.
 			if (filename == null){
-				//TODO: Don't hard code the name.
 				is= getBaseContext().getResources().openRawResource(resource);
 				input =  new BufferedReader(new InputStreamReader(is), 1024*8);
 			}
@@ -1040,6 +1059,10 @@ public class MainActivity extends Activity {
 		
 		//The file.
 		File file;
+		
+		//Clear the array
+		vert = new Vertex[MAX_VERTICES];
+		face = new Face[MAX_FACES];
 		
 		try{
 			
@@ -1388,6 +1411,7 @@ public class MainActivity extends Activity {
 						if (resource != -1)
 							loadModel(null, resource, mtl);
 					}
+					mLayout.toggleMenu();
 				}
 				break;
 		}
