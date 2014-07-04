@@ -10,7 +10,7 @@ public class Vertex {
 	 * Class constructor. Initializes a vertex in the coordinates origin.
 	 * @see  Vertex(float x, float y, float z)
 	 */
-	public Vertex(){
+	Vertex(){
 		this(0, 0, 0);
 	}
 	
@@ -22,7 +22,7 @@ public class Vertex {
 	 * @param z The Z coordinate.
 	 * @see  Vertex(float x, float y, float z)
 	 */
-	public Vertex(float x, float y, float z) {
+	Vertex(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

@@ -200,7 +200,9 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 	 * @see File
 	 * @see populatedFiles()
 	 */
-	private void searchDirectory(File dir){
+	private void searchDirectory(File dir, int depth){
+		if (depth >= 6)	//Crappy code, but it avoids ANR in low-devices
+			return;
 		for (File child : dir.listFiles() ){
 			if (child.isFile()){
 				String ext = child.getName().substring(child.getName().length() - 4);
@@ -213,7 +215,7 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 				}
 			}
 			else if (child.isDirectory())
-				searchDirectory(child);
+				searchDirectory(child, depth + 1);
 		}
 		return;
 	}
@@ -267,7 +269,7 @@ public class Reload extends AsyncTask<Void, Void, Void> {
 			cur.moveToNext();
     	}
 		
-		searchDirectory(Environment.getExternalStorageDirectory());
+		searchDirectory(Environment.getExternalStorageDirectory(), 0);
 		populateFiles();
 		
 		cur.close();
